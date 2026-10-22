@@ -1,0 +1,831 @@
+<title>Landed</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Landed checks NYC leases, listings, landlords and renewals against the law and cites the rule behind every flag.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{
+  --gl:max(16px,env(safe-area-inset-left,0px)); --gr:max(16px,env(safe-area-inset-right,0px));
+  --bg:#EEF1ED; --s1:#E4E9E4; --s2:#D9E0DA; --ink:#0E1A14; --soft:#34463C;
+  --go:#00793A; --go-ink:#FFFFFF; --after:#1457B5; --after-ink:#FFFFFF;
+  --hl:#FFE14D; --hl-ink:#0E1A14; --flag:#B82B18; --flag-bg:#F6DCD6; --warn:#8F5200; --warn-bg:#F5E5C6; --ok:#17703E; --ok-bg:#D3EAD9;
+  --field:#0A3A21; --field-ink:#F3F8F4; --field-soft:#B7D0BF; --field-2:#115530;
+  --f-display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --f-body:'Instrument Sans','Helvetica Neue',Arial,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1410; --s1:#142019; --s2:#1C2C23; --ink:#EAF1EC; --soft:#B4C6BB;
+  --go:#3FCB7C; --go-ink:#06140C; --after:#6EA2FF; --after-ink:#07142B;
+  --hl:#E8C92E; --flag:#FF8A74; --flag-bg:#3A1A15; --warn:#F0B34A; --warn-bg:#352610; --ok:#58D58C; --ok-bg:#14301F;
+  --field:#06240F; --field-ink:#EAF1EC; --field-soft:#9FBEAB; --field-2:#0E3A20; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1410; --s1:#142019; --s2:#1C2C23; --ink:#EAF1EC; --soft:#B4C6BB;
+  --go:#3FCB7C; --go-ink:#06140C; --after:#6EA2FF; --after-ink:#07142B;
+  --hl:#E8C92E; --flag:#FF8A74; --flag-bg:#3A1A15; --warn:#F0B34A; --warn-bg:#352610; --ok:#58D58C; --ok-bg:#14301F;
+  --field:#06240F; --field-ink:#EAF1EC; --field-soft:#9FBEAB; --field-2:#0E3A20; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--f-body);padding-left:var(--gl);padding-right:var(--gr);padding-block:0;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;letter-spacing:-.03em;text-wrap:balance}
+p{margin:0}a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1240px;margin:0 auto}
+.bleed{margin-left:calc(-1*var(--gl));margin-right:calc(-1*var(--gr));padding-left:var(--gl);padding-right:var(--gr)}
+.small{font-size:14px}.soft{color:var(--soft)}
+
+/* nav: plain bar */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--bg)}
+.nav-in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:6px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font:800 24px/1 var(--f-display);letter-spacing:-.04em;text-decoration:none;margin-right:auto}
+.logo img{width:30px;height:30px;display:block}
+.nav a.l{padding:8px 12px;text-decoration:none;font-weight:500;font-size:15px}
+.nav a.l:hover{text-decoration:underline;text-underline-offset:4px}
+.theme{width:38px;height:38px;border-radius:50%;border:0;background:var(--s1);display:grid;place-items:center;margin-left:6px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:15px 26px;border-radius:99px;border:0;background:var(--ink);color:var(--bg);font:600 16px/1 var(--f-body);text-decoration:none;transition:transform .25s var(--ease)}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(0) scale(.98)}
+.btn.go{background:var(--go);color:var(--go-ink)}.btn.after{background:var(--after);color:var(--after-ink)}
+.btn.quiet{background:var(--s2);color:var(--ink)}
+.btn.sm{padding:11px 18px;font-size:14.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+:focus-visible{outline:3px solid var(--go);outline-offset:3px}
+@media(max-width:760px){.nav a.l.hide{display:none}}
+
+/* hero */
+.hero{padding:clamp(40px,7vw,96px) 0 clamp(72px,9vw,150px)}
+.hero h1{font-size:clamp(46px,9.2vw,138px);font-weight:800;line-height:.92;letter-spacing:-.055em;max-width:11ch}
+.hl{position:relative;white-space:nowrap;z-index:0;color:#0E1A14}
+.hl::before{content:"";position:absolute;left:-.05em;right:-.05em;top:12%;bottom:-2%;background:var(--hl);z-index:-1;transform-origin:left center;transform:scaleX(var(--s,1));border-radius:.06em}
+.hero-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,6vw,96px);margin-top:clamp(32px,5vw,64px);align-items:start}
+.lede{font-size:clamp(19px,1.9vw,24px);line-height:1.4;max-width:30ch}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.hero .facts{display:flex;gap:34px;flex-wrap:wrap;margin-top:44px}
+.hero .facts div{max-width:19ch;font-size:15px}
+.hero .facts b{display:block;font:800 40px/1 var(--f-display);letter-spacing:-.04em;margin-bottom:6px}
+.doc{background:var(--s1);padding:clamp(18px,2.4vw,30px);border-radius:4px;transform:rotate(1.2deg);position:relative}
+.doc-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;margin-bottom:10px}
+.stamp{color:var(--go);font-weight:600;transform:rotate(-3deg);display:inline-block}
+.ln{font:500 clamp(17px,1.8vw,22px)/1.3 var(--f-body);padding:12px 0 4px}
+.ln .m{position:relative;z-index:0;padding:0 3px;margin:0 -3px;white-space:normal}
+.ln .m::before{content:"";position:absolute;inset:8% 0 0 0;background:var(--hl);z-index:-1;transform-origin:left;transform:scaleX(var(--sx,1));border-radius:2px}
+.ln .m{color:var(--ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ln .m{color:#0E1A14}}
+:root[data-theme="dark"] .ln .m{color:#0E1A14}
+.chip{display:flex;gap:10px;align-items:baseline;font-size:15px;color:var(--flag);padding:2px 0 8px 14px;border-left:4px solid var(--flag);margin:4px 0 6px 2px}
+.chip b{font-weight:600;background:var(--flag-bg);padding:1px 7px;border-radius:3px;white-space:nowrap}
+.total{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-top:16px;padding-top:16px;border-top:3px solid var(--bg)}
+.total small{font-size:14px;max-width:22ch;line-height:1.3}
+.total strong{font:800 clamp(40px,6vw,68px)/1 var(--f-display);color:var(--flag);letter-spacing:-.045em}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.doc{transform:none}}
+
+/* problem field */
+.field{background:var(--field);color:var(--field-ink);padding-block:clamp(88px,11vw,190px)}
+.field h2{font-size:clamp(34px,6.6vw,100px);font-weight:800;line-height:.95;letter-spacing:-.05em;max-width:19ch}
+.field .intro{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,6vw,100px);align-items:end}
+.field .intro p{font-size:clamp(18px,1.8vw,22px);line-height:1.45;color:var(--field-ink);max-width:36ch}
+.big{display:flex;flex-wrap:wrap;gap:clamp(20px,4vw,64px);align-items:baseline;margin-top:clamp(56px,8vw,120px)}
+.big .n{font:800 clamp(88px,19vw,290px)/.8 var(--f-display);letter-spacing:-.07em;color:var(--hl)}
+.big p{font-size:clamp(20px,2.2vw,28px);max-width:22ch;line-height:1.25;font-family:var(--f-display);font-weight:500;letter-spacing:-.02em}
+.big small{display:block;font:400 14px/1.4 var(--f-body);color:var(--field-soft);margin-top:10px;letter-spacing:0}
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:20px;margin-top:clamp(56px,8vw,110px)}
+.tile{background:var(--field-2);padding:clamp(20px,2.4vw,34px);border-radius:4px;min-width:0}
+.tile h3{font-size:clamp(22px,2.3vw,32px);line-height:1.08;letter-spacing:-.035em;margin-bottom:16px;max-width:22ch}
+.tile .src{font-size:13.5px;color:var(--field-soft);margin-top:14px;line-height:1.4}
+.tile .src a{color:var(--field-ink)}
+.t-line{grid-column:span 7}.t-fun{grid-column:span 5}.t-stack{grid-column:span 12}.t-ren{grid-column:span 4}.t-rent{grid-column:span 4}.t-stu{grid-column:span 4}
+@media(max-width:980px){.t-line,.t-fun,.t-ren,.t-rent,.t-stu{grid-column:span 12}.field .intro{grid-template-columns:1fr}}
+svg text{font-family:var(--f-body)}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart .ax{fill:var(--field-soft);font-size:12.5px}
+.chart .lb{fill:var(--field-ink);font-size:14px;font-weight:600}
+.chart .dim{stroke:var(--field-soft);stroke-width:1;opacity:.35}
+.hbar{display:grid;grid-template-columns:minmax(96px,150px) 1fr;gap:12px;align-items:center;margin:12px 0;font-size:15px}
+.hbar .tr{height:34px;background:var(--field);border-radius:2px;position:relative;overflow:hidden}
+.hbar .tr i{position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--c,var(--hl));display:block;border-radius:2px}
+.hbar .tr b{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:600;font-size:15px;color:#0E1A14;white-space:nowrap}
+.hbar .tr b.out{color:var(--field-ink)}
+.cols{display:flex;gap:26px;align-items:flex-end;height:210px;margin-top:6px}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px;height:100%}
+.col i{width:100%;height:var(--h);background:var(--c);display:block;border-radius:2px 2px 0 0}
+.col b{font:800 36px/1 var(--f-display);letter-spacing:-.04em}
+.col span{font-size:13.5px;color:var(--field-soft);text-align:center;line-height:1.25}
+.k{font:800 clamp(44px,5vw,70px)/.95 var(--f-display);letter-spacing:-.05em}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:var(--c)}
+.stk{display:grid;gap:18px;margin-top:8px}
+.stk .row{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+.stk .bar{display:flex;height:60px;background:var(--field);border-radius:2px;overflow:hidden}
+.stk .seg{flex:0 0 var(--w);display:flex;align-items:center;padding:0 10px;background:var(--c);color:#0E1A14;font-size:14px;font-weight:600;line-height:1.1;overflow:hidden;white-space:nowrap}
+.stk .tot{font:800 28px/1 var(--f-display);letter-spacing:-.03em;margin-top:6px}
+@media(max-width:700px){.stk .row{grid-template-columns:1fr}.stk .seg{font-size:11.5px;padding:0 5px}}
+.clips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:clamp(48px,6vw,90px)}
+.clip{background:var(--bg);color:var(--ink);padding:20px 22px 22px;text-decoration:none;display:flex;flex-direction:column;gap:10px;border-radius:2px;transition:transform .3s var(--ease)}
+.clip:nth-child(odd){transform:rotate(-.6deg)}.clip:nth-child(even){transform:rotate(.5deg)}
+.clip:hover{transform:rotate(0) translateY(-4px)}
+.clip .o{font-weight:600;font-size:14px}
+.clip h4{font:700 21px/1.12 var(--f-display);letter-spacing:-.025em}
+.clip p{font-size:15px;line-height:1.4}
+.clip em{font-style:normal;background:var(--hl);color:#0E1A14;padding:0 3px}
+@media(max-width:980px){.clips{grid-template-columns:1fr 1fr}}@media(max-width:620px){.clips{grid-template-columns:1fr}}
+.clips-h{margin-top:clamp(56px,7vw,110px);font-size:clamp(30px,4vw,52px);font-weight:800;max-width:20ch;letter-spacing:-.045em}
+
+/* two lines */
+.lines{display:grid;grid-template-columns:1fr 1fr}
+.line{padding:clamp(56px,7vw,110px) clamp(20px,4vw,64px)}
+.line.b{background:var(--go);color:var(--go-ink);padding-left:var(--gl)}
+.line.a{background:var(--after);color:var(--after-ink);padding-right:var(--gr)}
+.line h2{font-size:clamp(36px,5vw,72px);font-weight:800;line-height:.95;letter-spacing:-.05em}
+.line .who{font-size:18px;margin-top:12px;max-width:30ch}
+.line ul{list-style:none;padding:0;margin:clamp(30px,4vw,56px) 0 0;display:grid;gap:26px}
+.line li{display:grid;grid-template-columns:22px 1fr;gap:16px;position:relative}
+.line li::before{content:"";position:absolute;left:8px;top:26px;bottom:-30px;width:5px;background:currentColor;opacity:.35}
+.line li:last-child::before{display:none}
+.line li i{width:21px;height:21px;border-radius:50%;background:var(--bg);display:block;margin-top:4px;position:relative}
+.line li b{font:700 22px/1.15 var(--f-display);letter-spacing:-.025em;display:block}
+.line li span{display:block;font-size:16.5px;margin-top:4px;line-height:1.4}
+.line li u{text-decoration:none;font-weight:600;background:var(--hl);color:#0E1A14;padding:0 6px;margin-left:8px;font-size:13.5px;border-radius:2px;white-space:nowrap}
+.line .btn{margin-top:36px;background:var(--bg);color:var(--ink)}
+.shared{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,4vw,64px);padding-block:clamp(48px,6vw,90px)}
+.shared h3{font-size:clamp(24px,2.6vw,34px);line-height:1.05;letter-spacing:-.035em;margin-bottom:10px}
+.shared p{font-size:17px}
+@media(max-width:860px){.lines,.shared{grid-template-columns:1fr}.line.b{padding-right:var(--gr)}.line.a{padding-left:var(--gl)}}
+
+/* tool */
+.toolsec{padding-block:clamp(88px,11vw,170px)}
+.toolsec h2,.how h2,.oss h2{font-size:clamp(34px,6vw,88px);font-weight:800;line-height:.95;letter-spacing:-.05em;max-width:19ch}
+.toolsec .sub{max-width:44ch;margin-top:22px;font-size:20px}
+.tool{display:grid;grid-template-columns:260px minmax(0,1fr);margin-top:clamp(36px,5vw,64px);background:var(--s1);border-radius:4px;overflow:hidden}
+.rail{background:var(--s2);padding:18px 0;display:flex;flex-direction:column}
+.rail h4{font:700 15px/1.2 var(--f-body);letter-spacing:0;padding:18px 22px 8px}
+.rail h4.g{color:var(--go)}.rail h4.a{color:var(--after)}
+.ri{display:block;text-align:left;border:0;background:transparent;padding:12px 22px;font:500 16px/1.2 var(--f-body);border-left:6px solid transparent;width:100%}
+.ri:hover{background:var(--s1)}
+.ri[aria-selected="true"]{background:var(--s1);font-weight:600;border-left-color:var(--c)}
+.ri small{display:block;font-weight:400;font-size:13px;color:var(--soft);margin-top:3px}
+.pane{padding:clamp(22px,3.2vw,44px);min-width:0}
+.pane[hidden]{display:none}
+.pane h3{font-size:clamp(26px,3vw,40px);line-height:1;margin-bottom:8px}
+.pane>p.lead{max-width:56ch;margin-bottom:24px}
+.split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(22px,3vw,44px)}
+@media(max-width:1000px){.tool{grid-template-columns:1fr}.rail{flex-direction:row;overflow-x:auto;padding:0}.rail h4{display:none}.ri{border-left:0;border-bottom:5px solid transparent;white-space:nowrap;width:auto}.ri[aria-selected="true"]{border-bottom-color:var(--c)}.ri small{display:none}.split{grid-template-columns:1fr}}
+label{display:block;font:600 14.5px/1.2 var(--f-body);margin-bottom:7px}
+textarea,input[type=number],input[type=text],input[type=date],select{width:100%;font:400 16px/1.5 var(--f-body);color:var(--ink);background:var(--bg);border:2px solid transparent;border-radius:3px;padding:12px 14px}
+textarea{min-height:260px;resize:vertical}
+textarea:focus,input:focus,select:focus{outline:0;border-color:var(--go)}
+.demos{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.demo{border:0;background:var(--bg);border-radius:3px;padding:12px 14px;text-align:left;font:600 15px/1.2 var(--f-body);flex:1 1 150px}
+.demo small{display:block;font-weight:400;font-size:13.5px;color:var(--soft);margin-top:4px}
+.demo:hover,.demo.on{background:var(--hl);color:#0E1A14}.demo:hover small,.demo.on small{color:#0E1A14}
+.row{display:flex;gap:12px;align-items:flex-end;margin-top:16px;flex-wrap:wrap}
+.hint{font-size:14px;color:var(--soft);margin-top:10px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.fields .full{grid-column:1/-1}
+.check{display:flex;gap:10px;align-items:flex-start;font:400 16px/1.35 var(--f-body);margin:0 0 10px}
+.check input{width:20px;height:20px;margin-top:1px;accent-color:var(--go);flex:none}
+.file{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.file input{position:absolute;width:2px;height:2px;opacity:0;clip:rect(0 0 0 0)}
+.file:focus-within{outline:3px solid var(--go);outline-offset:3px}
+.empty{background:var(--bg);padding:38px 26px;border-radius:3px}
+.empty b{display:block;font:700 24px/1.1 var(--f-display);letter-spacing:-.03em;margin-bottom:8px}
+.verdict{padding:22px 24px;display:flex;gap:18px;align-items:center;margin-bottom:14px;border-radius:3px}
+.verdict.stop{background:var(--flag-bg);color:var(--flag)}.verdict.push{background:var(--warn-bg);color:var(--warn)}.verdict.clean,.verdict.minor{background:var(--ok-bg);color:var(--ok)}
+.verdict .vb{font:800 clamp(30px,4.2vw,52px)/.95 var(--f-display);letter-spacing:-.045em}
+.verdict p{font-size:16px;color:var(--ink)}
+.facts2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.fact{background:var(--bg);padding:14px 16px;border-radius:3px}
+.fact small{display:block;font-size:13.5px;color:var(--soft);margin-bottom:4px}
+.fact strong{font:800 26px/1.05 var(--f-display);letter-spacing:-.03em}
+.fact.bad strong{color:var(--flag)}
+@media(max-width:560px){.facts2{grid-template-columns:1fr 1fr}}
+.flag{border-left:6px solid var(--c);padding:18px 20px;margin-bottom:10px;background:var(--bg);border-radius:0 3px 3px 0}
+.flag.high{--c:var(--flag)}.flag.med{--c:var(--warn)}.flag.low,.flag.info{--c:var(--soft)}.flag.ok{--c:var(--ok)}
+.flag header{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.flag h4{font:700 19px/1.2 var(--f-display);letter-spacing:-.02em}
+.tagt{font-weight:600;font-size:14px;color:var(--c);white-space:nowrap}
+.over{font:800 20px/1 var(--f-display);color:var(--flag);white-space:nowrap}
+.flag blockquote{margin:10px 0;padding:10px 14px;background:var(--s1);border-radius:3px;font-size:15.5px}
+.flag p{font-size:16px;margin-top:6px}
+.flag .ask{margin-top:12px;background:var(--s1);padding:10px 14px;border-radius:3px;font-size:15.5px}
+.flag .ask b{display:block;font-size:14px;margin-bottom:2px}
+.srcs{display:flex;gap:8px 14px;flex-wrap:wrap;margin-top:12px;font-size:14px}
+.srcs a{font-weight:600;text-underline-offset:3px}
+.annot{background:var(--bg);border-radius:3px;padding:16px 18px;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;max-height:240px;overflow:auto;font-size:16px;line-height:1.7}
+mark{padding:0 2px;border-radius:2px;color:#0E1A14;background:var(--hl)}
+mark.high{background:#FFB4A6}mark.med{background:#FFD98A}mark.low{background:#C9D3CC}
+.draft{background:var(--s2);padding:18px;margin-top:16px;border-radius:3px}
+.draft pre,.letter{white-space:pre-wrap;word-break:break-word;font:400 15.5px/1.6 var(--f-body);margin:12px 0 0;background:var(--bg);padding:16px;border-radius:3px}
+.tbl{display:grid;gap:10px}
+.path{background:var(--bg);padding:16px 18px;border-left:6px solid var(--s2);border-radius:0 3px 3px 0}
+.path.best{border-left-color:var(--go)}.path.no{opacity:.62}
+.path h4{font:700 19px/1.2 var(--f-display);letter-spacing:-.02em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.path h4 span{font-size:14px;font-family:var(--f-body);letter-spacing:0;color:var(--go);font-weight:600}
+.path.no h4 span{color:var(--flag)}
+.path .nums{display:flex;gap:26px;flex-wrap:wrap;margin:8px 0}
+.path .nums div small{display:block;font-size:13.5px;color:var(--soft)}
+.path .nums div b{font:800 24px/1.1 var(--f-display);letter-spacing:-.03em}
+.path p{font-size:15px;margin-top:4px}
+.meter{height:14px;background:var(--bg);border-radius:2px;overflow:hidden;margin:6px 0 12px}
+.meter i{display:block;height:100%;background:var(--go)}
+.big2{font:800 clamp(64px,10vw,120px)/.85 var(--f-display);letter-spacing:-.06em}
+.note{background:var(--warn-bg);padding:12px 16px;font-size:15px;margin-top:12px;border-radius:3px}
+
+/* how */
+.how{padding-block:clamp(88px,11vw,170px)}
+.how .cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,6vw,100px);margin-top:clamp(36px,5vw,70px)}
+.how h3{font-size:clamp(28px,3.4vw,46px);line-height:1;letter-spacing:-.04em;margin-bottom:14px}
+.how .p{font-size:19px;max-width:34ch}
+.how ol{margin:0;padding:0;list-style:none;display:grid;gap:22px}
+.how ol li{display:grid;grid-template-columns:22px 1fr;gap:16px;position:relative}
+.how ol li::before{content:"";position:absolute;left:8px;top:26px;bottom:-26px;width:5px;background:var(--s2)}
+.how ol li:last-child::before{display:none}
+.how ol li i{width:21px;height:21px;border-radius:50%;background:var(--go);display:block;margin-top:4px;position:relative}
+.how ol li b{font:700 22px/1.15 var(--f-display);letter-spacing:-.025em;display:block}
+.how ol li span{font-size:17px;display:block;margin-top:3px}
+.rule{background:var(--s1);padding:26px 28px;margin-top:28px;border-left:8px solid var(--go);border-radius:0 3px 3px 0}
+.rule.ai{border-left-color:var(--after)}
+.rule h4{font:700 22px/1.1 var(--f-display);letter-spacing:-.03em;margin-bottom:6px}
+@media(max-width:860px){.how .cols2{grid-template-columns:1fr}}
+
+.oss{background:var(--s1);padding-block:clamp(72px,9vw,140px)}
+.oss .g{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,6vw,100px);align-items:start;margin-top:30px}
+.oss ul{margin:0;padding:0;list-style:none;display:grid;gap:12px;font-size:19px}
+.oss li::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--go);margin-right:12px}
+.oss li.n::before{background:var(--s2)}
+@media(max-width:860px){.oss .g{grid-template-columns:1fr}}
+footer{padding-block:clamp(48px,6vw,90px) 40px}
+footer .word{font:800 clamp(72px,19vw,290px)/.8 var(--f-display);letter-spacing:-.07em;color:var(--go);display:flex;align-items:flex-end;gap:.06em;overflow:hidden}
+footer .word img{height:.62em;width:.62em;margin-bottom:.02em}
+footer .fine{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 40px;margin-top:36px;font-size:15px}
+@media(max-width:700px){footer .fine{grid-template-columns:1fr}}
+
+html.js .rv{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0ms)}
+html.js .rv.in{opacity:1;transform:none}
+html.js .tile .hbar i,html.js .stk .seg{transition:width 1.1s var(--ease),flex-basis 1.1s var(--ease)}
+html.js .tile:not(.in) .hbar .tr i{width:0}
+html.js .tile:not(.in) .stk .seg{flex-basis:0}
+html.js .tile:not(.in) .col i{height:0}
+.col i{transition:height 1.1s var(--ease)}
+.draw{stroke-dasharray:1;stroke-dashoffset:0;transition:stroke-dashoffset 1.6s var(--ease)}
+html.js .tile:not(.in) .draw{stroke-dashoffset:1}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}html.js .rv{opacity:1;transform:none;transition:none}.btn,.clip{transition:none}.draw,.col i,.hbar i,.stk .seg{transition:none!important}}
+</style>
+
+<header class="nav bleed"><div class="nav-in">
+  <a class="logo" href="#top"><img src="assets/logo.svg" alt="" width="30" height="30">Landed</a>
+  <a class="l hide" href="#problem">The problem</a><a class="l hide" href="#lines">Product</a><a class="l hide" href="#how">How it works</a>
+  <a class="btn go sm" href="#tool">Try it</a>
+  <button class="theme" id="theme" aria-label="Toggle light and dark theme"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+  <h1>Check it before you <span class="hl">sign it.</span></h1>
+  <div class="hero-grid">
+    <div>
+      <p class="lede">Landed reads your lease, listing or renewal offer, checks it against New York law, and shows the rule behind every flag.</p>
+      <div class="cta"><a class="btn go" href="#tool" data-open="checker">Check a lease or listing</a><a class="btn quiet" href="#problem">See how big the problem is</a></div>
+      <div class="facts">
+        <div><b>$4,000</b>to see a hidden listing, reported in Aug 2026</div>
+        <div><b>2,000+</b>complaints under the FARE Act in year one</div>
+        <div><b>14 days</b>to return your deposit, or lose the right to keep it</div>
+      </div>
+    </div>
+    <div class="doc" id="herodoc" data-ui aria-label="Example: Landed checking a lease rider">
+      <div class="doc-head"><span>Rider, unit 4C, 214 E 11th St</span><span class="stamp">Checked by Landed</span></div>
+      <p class="ln"><span class="m">Monthly rent: $3,400</span></p>
+      <p class="ln"><span class="m">Security deposit: $6,800 (two months)</span></p>
+      <div class="chip"><b>+$3,400</b><span>A deposit is capped at one month · GOL §7-108</span></div>
+      <p class="ln"><span class="m">Broker fee: 15% of annual rent, paid by tenant</span></p>
+      <div class="chip"><b>+$6,120</b><span>A landlord's broker cannot bill you · FARE Act</span></div>
+      <p class="ln"><span class="m">Application fee: $150</span></p>
+      <div class="chip"><b>+$130</b><span>Screening fee is capped at $20 · RPL §238-a</span></div>
+      <div class="total"><small>Overcharged at signing, if you had paid this</small><strong id="heroTotal">$9,650</strong></div>
+    </div>
+  </div>
+</div>
+
+<section id="problem" class="field bleed">
+ <div class="wrap">
+  <div class="intro">
+    <h2 class="rv">You are not the only one paying.</h2>
+    <p class="rv" style="--d:120ms">In June 2025 New York made landlords pay for their own brokers. A year later renters still face fees nobody can explain, and the people who enforce the law are badly outnumbered. Every figure below links to its source.</p>
+  </div>
+  <div class="big rv">
+    <div class="n" data-count="4000" data-pre="$">$4,000</div>
+    <p>to see a listing, charged by brokers a year after the ban.<small>Bloomberg Law, August 12, 2026. Reported for hidden listings; one renter found a Brooklyn two-bedroom priced 60% below market after paying.</small></p>
+  </div>
+  <div class="bento" id="bento">
+    <div class="tile t-line rv"><h3>Complaints tripled in a year. Summonses barely moved.</h3><div id="c-line"></div>
+      <p class="src">NYC DCWP complaint counts as reported by <a href="https://brooklyndowntownstar.com/uncategorized/2025/07/15/nyc-banned-these-broker-fees-in-june-why-are-so-many-brooklynites-still-paying-them/" target="_blank" rel="noopener">Brooklyn Downtown Star</a> (Jul 2025), <a href="https://hoodline.com/2026/03/nyc-renters-fume-as-fare-act-refunds-barely-trickled-in/" target="_blank" rel="noopener">Hoodline</a> (Mar 2026) and <a href="https://therealdeal.com/new-york/2026/06/10/fare-act-sparks-thousands-of-complaints-refunds-in-year-1/" target="_blank" rel="noopener">The Real Deal</a> (Jun 2026). Each outlet counts slightly differently.</p></div>
+    <div class="tile t-fun rv" style="--d:100ms"><h3>2,000 complaints, 74 summonses.</h3>
+      <div class="hbar"><span>Complaints and inquiries</span><div class="tr"><i style="--w:100%"></i><b>2,000+</b></div></div>
+      <div class="hbar"><span>Summonses issued</span><div class="tr"><i style="--w:3.7%;--c:var(--field-soft)"></i><b class="out" style="left:calc(3.7% + 10px)">74</b></div></div>
+            <p style="margin-top:18px;font-size:18px;max-width:34ch">City penalties total about <b>$27,000</b> and tenants got back about <b>$15,000</b>. One renter's illegal broker fee can be more than that.</p>
+      <p class="src">The Real Deal, June 10, 2026. 74 summonses allege 100 violations. The bars are to scale.</p></div>
+    <div class="tile t-ren rv"><h3>Where the law has teeth, it works.</h3>
+      <div class="cols"><div class="col"><b>26%</b><i style="--h:100%;--c:var(--field-soft)"></i><span>of renewals rose over 10%, Apr 2022 to Apr 2024</span></div><div class="col"><b>9%</b><i style="--h:35%;--c:var(--hl)"></i><span>after Good Cause took effect</span></div></div>
+      <p class="src"><a href="https://www.openigloo.com/blogs/good-cause-eviction-analysis" target="_blank" rel="noopener">Openigloo analysis</a>, April 2026. Sample size not published.</p></div>
+    <div class="tile t-rent rv" style="--d:100ms"><h3>Manhattan rent hit a record, and there is nothing to choose from.</h3>
+      <div class="k">$5,395</div><p style="margin:6px 0 14px">median rent in September 2026, up 9% in a year</p>
+      <div class="hbar"><span>Vacancy</span><div class="tr"><i style="--w:15.4%"></i><b class="out" style="left:calc(15.4% + 10px)">1.54%</b></div></div>
+      <div class="hbar"><span>Active listings</span><div class="tr"><i style="--w:50%;--c:var(--field-soft)"></i><b>5,015 (−16%)</b></div></div>
+      <p class="src"><a href="https://www.6sqft.com/manhattan-median-rent-hits-record-5395-month-in-september/" target="_blank" rel="noopener">6sqft</a> reporting Corcoran's September 2026 report. Vacancy bar is drawn against a 10% scale.</p></div>
+    <div class="tile t-stu rv" style="--d:200ms"><h3>137,799 people in New York State rent with no US credit.</h3>
+      <div id="c-donut"></div>
+      <p class="src"><a href="https://opendoorsdata.org/wp-content/uploads/2025/11/OpenDoors_FactSheet_New-York_-2025.pdf" target="_blank" rel="noopener">IIE Open Doors 2025</a>, international students in New York State, 2024/25. They are one group; newcomers who work are not counted.</p></div>
+    <div class="tile t-stack rv"><h3>One Manhattan median apartment at signing.</h3><div id="c-stack"></div>
+      <p class="src">Legal side: first month and a one-month deposit at the $5,395 median, plus a $20 background check (GOL §7-108, RPL §238-a). Illegal side: a 15% broker fee on annual rent (a rate seen in reported cases), the $4,000 listing-access fee, and $1,140 of junk fees from one reported Brooklyn listing ($500 lease fee, $575 processing, $65 digital submission). Illustrative sum, not an average. Average upfront saving when no broker fee is collected: $5,454 (StreetEasy, via <a href="https://hoodline.com/2026/03/nyc-renters-fume-as-fare-act-refunds-barely-trickled-in/" target="_blank" rel="noopener">Hoodline</a>).</p></div>
+  </div>
+  <h3 class="clips-h rv">The press has said it for a year.</h3>
+  <div class="clips" id="clips"></div>
+ </div>
+</section>
+
+<section id="lines" class="bleed" style="padding-bottom:0">
+ <div class="lines">
+  <article class="line b">
+    <h2 class="rv">Before you sign</h2>
+    <p class="who">For newcomers, students and international renters.</p>
+    <ul>
+      <li><i></i><div><b>Lease and listing checker<u>Live</u></b><span>Paste or upload a lease, rider or agent's message. Every fee and clause is checked and cited.</span></div></li>
+      <li><i></i><div><b>Vet the landlord and broker<u>Live</u></b><span>Turn the HPD record into a plain-English read, with the questions to ask.</span></div></li>
+      <li><i></i><div><b>True move-in cost<u>Live</u></b><span>Income, guarantor or prepaid rent: what each path really costs with no US credit.</span></div></li>
+      <li><i></i><div><b>Renter passport<u>Live</u></b><span>Build the paper package landlords can say yes to.</span></div></li>
+    </ul>
+    <a class="btn" href="#tool" data-open="checker">Open the checker</a>
+  </article>
+  <article class="line a">
+    <h2 class="rv">After you've signed</h2>
+    <p class="who">For tenants renewing, paying fees or waiting on a deposit.</p>
+    <ul>
+      <li><i></i><div><b>Renewal check<u>Live</u></b><span>Good Cause cap or rent freeze, with the exact overcharge.</span></div></li>
+      <li><i></i><div><b>Fee audit<u>Live</u></b><span>Scan your lease and bills for fees New York does not allow, then draft the complaint.</span></div></li>
+      <li><i></i><div><b>Deposit clock<u>Live</u></b><span>Fourteen days to return it. After that, a demand letter writes itself.</span></div></li>
+      <li><i></i><div><b>Landlord record<u>Live</u></b><span>Open violations and litigation for your building, in one read.</span></div></li>
+    </ul>
+    <a class="btn" href="#tool" data-open="renewal">Check a renewal</a>
+  </article>
+ </div>
+ <div class="wrap shared">
+   <div class="rv"><h3>Rules decide. AI explains.</h3><p>Flags come from fixed, auditable rules. AI only reads messy text and writes your reply.</p></div>
+   <div class="rv" style="--d:100ms"><h3>Every flag cites its source.</h3><p>A statute or an agency page, one tap away.</p></div>
+   <div class="rv" style="--d:200ms"><h3>Say it in your language.</h3><p>Replies and complaints drafted in the language you are most comfortable with.</p></div>
+ </div>
+</section>
+
+<section id="tool" class="wrap toolsec">
+  <h2 class="rv">Try it on a real message.</h2>
+  <p class="sub">Pick a sample or paste your own. Everything runs in your browser and nothing is stored.</p>
+  <div class="tool">
+    <div class="rail" role="tablist" aria-label="Landed tools">
+      <h4 class="g">Before you sign</h4>
+      <button class="ri" role="tab" data-tab="checker" style="--c:var(--go)" aria-selected="true">Lease and listing checker<small>Fees, clauses, scams</small></button>
+      <button class="ri" role="tab" data-tab="vet" style="--c:var(--go)" aria-selected="false">Vet landlord and broker<small>HPD record, licence</small></button>
+      <button class="ri" role="tab" data-tab="movein" style="--c:var(--go)" aria-selected="false">True move-in cost<small>Four ways to get approved</small></button>
+      <button class="ri" role="tab" data-tab="passport" style="--c:var(--go)" aria-selected="false">Renter passport<small>No credit history, no problem</small></button>
+      <h4 class="a">After you've signed</h4>
+      <button class="ri" role="tab" data-tab="renewal" style="--c:var(--after)" aria-selected="false">Renewal check<small>Good Cause and rent freeze</small></button>
+      <button class="ri" role="tab" data-tab="fees" style="--c:var(--after)" aria-selected="false">Fee audit<small>Find fees, draft the complaint</small></button>
+      <button class="ri" role="tab" data-tab="deposit" style="--c:var(--after)" aria-selected="false">Deposit clock<small>14 days, then a letter</small></button>
+    </div>
+    <div>
+    <!-- checker -->
+    <div class="pane" id="p-checker" role="tabpanel">
+      <h3>Lease and listing checker</h3><p class="lead">Paste text, or upload a lease PDF, a text file or a photo of a page.</p>
+      <div class="split"><div>
+        <label>Start with a sample</label>
+        <div class="demos">
+          <button class="demo" data-demo="d1">Hidden-listing paywall<small>$4,000 to unlock a studio</small></button>
+          <button class="demo" data-demo="d2">Lease rider<small>Fees, deposit, odd clauses</small></button>
+          <button class="demo" data-demo="d3">Overseas owner<small>Too good to be true</small></button>
+        </div>
+        <label for="txt">Lease, rider, listing or message</label>
+        <textarea id="txt" placeholder="Paste text here. Example: Monthly rent $3,000. Security deposit $6,000. Broker fee one month's rent."></textarea>
+        <div class="row">
+          <div style="flex:1;min-width:150px"><label for="rent">Monthly rent (optional)</label><input id="rent" type="text" inputmode="numeric" placeholder="auto-detected"></div>
+          <label class="btn quiet sm file" style="margin:0">Upload PDF, photo or text<input type="file" id="file" accept=".pdf,.txt,.md,image/*"></label>
+          <button class="btn go" id="run">Check it</button>
+        </div>
+        <p class="hint" id="fileStatus">PDFs with selectable text and text files are read in your browser. Photos are read by Claude.</p>
+      </div><div id="out"><div class="empty"><b>Your report appears here</b>Choose a sample to see what Landed catches in under a second.</div></div></div>
+    </div>
+    <!-- vet -->
+    <div class="pane" id="p-vet" role="tabpanel" hidden>
+      <h3>Vet the landlord and broker</h3><p class="lead">Type the address and Landed pulls the building's HPD record from NYC Open Data, then checks the broker in the state licence database. You can also enter counts by hand.</p>
+      <div class="split"><div>
+        <div class="lookup">
+          <div class="fields">
+            <div><label for="l-boro">Borough</label><select id="l-boro"><option>Manhattan</option><option>Brooklyn</option><option>Queens</option><option>Bronx</option><option>Staten Island</option></select></div>
+            <div><label for="l-house">House number</label><input id="l-house" type="text" placeholder="100"></div>
+            <div class="full"><label for="l-street">Street, as HPD spells it</label><input id="l-street" type="text" placeholder="EAST 11 STREET"></div>
+          </div>
+          <div class="row"><button class="btn go sm" id="lbld">Look up this building</button></div>
+          <div class="fields" style="margin-top:18px"><div class="full"><label for="l-broker">Broker name, brokerage or licence number</label><input id="l-broker" type="text" placeholder="Brokerage name or 37AB1234567"></div></div>
+          <div class="row"><button class="btn go sm" id="lbrk">Check the licence</button></div>
+          <p class="hint" id="lstat" aria-live="polite"></p><div id="lres"></div>
+        </div>
+        <p class="hint" style="margin:22px 0 10px">Or look it up yourself and enter the counts:</p>
+        <div class="row" style="margin:0 0 16px;gap:8px">
+          <a class="btn quiet sm" href="https://hpdonline.hpdnyc.org" target="_blank" rel="noopener">HPD Online</a>
+          <a class="btn quiet sm" href="https://whoownswhat.justfix.org" target="_blank" rel="noopener">Who Owns What</a>
+          <a class="btn quiet sm" href="https://a836-acris.nyc.gov" target="_blank" rel="noopener">ACRIS</a>
+          <a class="btn quiet sm" href="https://appext20.dos.ny.gov/lcns_public/lic_name_search_frm" target="_blank" rel="noopener">Broker licence lookup</a>
+        </div>
+        <div class="fields">
+          <div><label for="v-units">Units in building</label><input id="v-units" type="number" min="1" value="24"></div>
+          <div><label for="v-portfolio">Owner's buildings</label><input id="v-portfolio" type="number" min="1" value="9"></div>
+          <div><label for="v-c">Open Class C violations</label><input id="v-c" type="number" min="0" value="2"></div>
+          <div><label for="v-b">Open Class B violations</label><input id="v-b" type="number" min="0" value="6"></div>
+          <div><label for="v-a">Open Class A violations</label><input id="v-a" type="number" min="0" value="4"></div>
+          <div><label for="v-comp">Complaints, last 12 months</label><input id="v-comp" type="number" min="0" value="11"></div>
+          <div><label for="v-lit">HPD litigation cases</label><input id="v-lit" type="number" min="0" value="1"></div>
+          <div><label for="v-broker">Broker licence</label><select id="v-broker"><option value="yes">Found in the DOS lookup</option><option value="no">Not found</option><option value="unknown" selected>Not checked yet</option></select></div>
+          <div class="full"><label class="check"><input type="checkbox" id="v-harass"> HPD lists a harassment finding for this building or owner</label></div>
+        </div>
+        <div class="row"><button class="btn go" id="vrun">Read the record</button></div>
+        <p class="hint">Starting values are an example, not a real building. Units in the building are not in these datasets, so enter them.</p>
+      </div><div id="vout"></div></div>
+    </div>
+    <!-- move-in -->
+    <div class="pane" id="p-movein" role="tabpanel" hidden>
+      <h3>True move-in cost</h3><p class="lead">Landlords score income and US credit. See what each way in really costs, in cash and in money you never get back.</p>
+      <div class="split"><div>
+        <div class="fields">
+          <div><label for="m-rent">Monthly rent ($)</label><input id="m-rent" type="number" min="0" value="3400"></div>
+          <div><label for="m-inc">Your annual income ($)</label><input id="m-inc" type="number" min="0" value="48000"></div>
+          <div class="full"><label class="check"><input type="checkbox" id="m-credit"> I have a US credit history around 700</label>
+          <label class="check"><input type="checkbox" id="m-guar"> A US-based guarantor can sign for me</label></div>
+          <div class="full"><label for="m-months">Months of rent the landlord asks upfront</label><input id="m-months" type="number" min="2" max="12" value="6"></div>
+        </div>
+        <div class="row"><button class="btn go" id="mrun">Compare the paths</button></div>
+        <p class="hint">Thresholds (40 times rent, 80 to 100 times for guarantors, a fee of about one month's rent for guarantor companies) are common industry practice, not law. Confirm each landlord's own rules.</p>
+      </div><div id="mout"></div></div>
+    </div>
+    <!-- passport -->
+    <div class="pane" id="p-passport" role="tabpanel" hidden>
+      <h3>Renter passport</h3><p class="lead">No credit history does not mean no proof. Tick what you can show and Landed builds your cover note and tells you what to add.</p>
+      <div class="split"><div>
+        <div class="fields">
+          <div><label for="pp-name">Your name</label><input id="pp-name" type="text" placeholder="Full name"></div>
+          <div><label for="pp-rent">Rent you are applying for ($)</label><input id="pp-rent" type="number" min="0" value="3400"></div>
+          <div class="full"><label for="pp-funds">Funds you can show ($)</label><input id="pp-funds" type="number" min="0" value="40000"></div>
+          <div class="full"><label>What you have</label>
+            <label class="check"><input type="checkbox" data-pp="id" checked> Passport and visa or I-20</label>
+            <label class="check"><input type="checkbox" data-pp="status" checked> Proof of student or work status</label>
+            <label class="check"><input type="checkbox" data-pp="funds" checked> Bank statements, last 3 months</label>
+            <label class="check"><input type="checkbox" data-pp="offer"> Admission letter or employer offer letter</label>
+            <label class="check"><input type="checkbox" data-pp="credit"> Credit report from your home country</label>
+            <label class="check"><input type="checkbox" data-pp="ref"> Reference from a previous landlord</label>
+            <label class="check"><input type="checkbox" data-pp="tax"> Tax returns or payslips</label>
+            <label class="check"><input type="checkbox" data-pp="guar"> Letter from a guarantor or family</label></div>
+        </div>
+        <div class="row"><button class="btn go" id="pprun">Build my passport</button></div>
+      </div><div id="ppout"></div></div>
+    </div>
+    <!-- renewal -->
+    <div class="pane" id="p-renewal" role="tabpanel" hidden>
+      <h3>Renewal check</h3><p class="lead">Your landlord sent a renewal offer. Is the increase allowed?</p>
+      <div class="split"><div>
+        <div class="fields">
+          <div class="full"><label for="r-type">Your apartment</label><select id="r-type"><option value="market">Market-rate (not rent-stabilized)</option><option value="stabilized">Rent-stabilized</option></select></div>
+          <div><label for="r-cur">Current rent ($/month)</label><input id="r-cur" type="number" min="0" value="3000"></div>
+          <div><label for="r-new">Offered rent ($/month)</label><input id="r-new" type="number" min="0" value="3400"></div>
+          <div class="full" id="r-stab" hidden><label for="r-start">New lease starts on</label><input id="r-start" type="date" value="2026-11-01"></div>
+          <div class="full" id="r-mkt">
+            <label class="check"><input type="checkbox" id="r-pre" checked> The building's certificate of occupancy is from before 2009</label>
+            <label class="check"><input type="checkbox" id="r-big" checked> My landlord owns more than 10 apartments in total</label>
+            <label class="check"><input type="checkbox" id="r-lux"> My rent is above 245% of HUD fair market rent</label>
+            <label for="r-cpi" style="margin-top:14px">CPI figure used by HCR (%)</label><input id="r-cpi" type="number" step="0.01" value="3.38">
+            <p class="hint">8.38% (5% plus 3.38% CPI) is the figure in DHCR's 2026 notice for NYC. Edit it if HCR publishes a new one.</p>
+          </div>
+        </div>
+        <div class="row"><button class="btn after" id="rrun">Check this renewal</button></div>
+      </div><div id="rout"></div></div>
+    </div>
+    <!-- fee audit -->
+    <div class="pane" id="p-fees" role="tabpanel" hidden>
+      <h3>Fee audit</h3><p class="lead">Paste your lease, a renewal offer or a bill. Landed finds fees New York does not allow and drafts the complaint.</p>
+      <div class="split"><div>
+        <label for="f-txt">Lease, bill or renewal offer</label>
+        <textarea id="f-txt" placeholder="Paste the text here."></textarea>
+        <div class="row"><label class="check" style="margin:0 auto 0 0"><input type="checkbox" id="f-stab"> My apartment is rent-stabilized</label><button class="btn quiet sm" id="fdemo">Use an example</button><button class="btn after" id="frun">Audit fees</button></div>
+      </div><div id="fout"></div></div>
+    </div>
+    <!-- deposit -->
+    <div class="pane" id="p-deposit" role="tabpanel" hidden>
+      <h3>Deposit clock</h3><p class="lead">Your landlord has 14 days after you move out to return your deposit or send an itemized statement. Miss it and they lose the right to keep any of it.</p>
+      <div class="split"><div>
+        <div class="fields">
+          <div><label for="d-date">Day you moved out</label><input id="d-date" type="date"></div>
+          <div><label for="d-amt">Deposit ($)</label><input id="d-amt" type="number" min="0" value="3400"></div>
+          <div><label for="d-name">Your name</label><input id="d-name" type="text" placeholder="Full name"></div>
+          <div><label for="d-ll">Landlord's name</label><input id="d-ll" type="text" placeholder="Landlord or company"></div>
+          <div class="full"><label for="d-addr">Apartment address</label><input id="d-addr" type="text" placeholder="214 E 11th St, Apt 4C, New York, NY"></div>
+        </div>
+        <div class="row"><button class="btn after" id="drun">Start the clock</button></div>
+      </div><div id="dout"></div></div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="wrap how">
+  <h2 class="rv">Rules decide. AI explains.</h2>
+  <div class="cols2">
+    <div>
+      <p class="p rv">A $6,800 deposit on $3,400 rent breaks the one-month cap or it does not. That is a statute and arithmetic, so Landed computes it the same way every time and links the source.</p>
+      <div class="rule rv"><h4>Where the rules are the verdict</h4><p>Fees, caps, deadlines and notice periods are fixed code anyone can read in the open-source repo.</p></div>
+      <div class="rule ai rv"><h4>Where AI earns its place</h4><p>Real documents are messy. AI reads photos, helps with extraction, and writes the polite, firm reply in your language. It never decides what is legal.</p></div>
+    </div>
+    <ol>
+      <li class="rv"><i></i><div><b>Paste or upload</b><span>A lease, rider, listing, renewal offer or a message from an agent.</span></div></li>
+      <li class="rv" style="--d:80ms"><i></i><div><b>Extract</b><span>The text is split into clauses and the amounts, months and parties are pulled out.</span></div></li>
+      <li class="rv" style="--d:160ms"><i></i><div><b>Check</b><span>Fixed rules compare each term with the statute. No guessing, no invented law.</span></div></li>
+      <li class="rv" style="--d:240ms"><i></i><div><b>Act</b><span>You get a cited report, the dollars at risk, and a reply or complaint ready to send.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="oss bleed">
+ <div class="wrap">
+  <h2 class="rv">Open source, so you can check us.</h2>
+  <div class="g">
+    <p class="rv" style="font-size:20px;max-width:36ch">Landed's code is public on GitHub. Every rule lives in one file with its citation next to it, so a tenant lawyer can review it and a developer can check it.</p>
+    <ul class="rv">
+      <li>Before you sign: checker, vet with live HPD and licence lookups, move-in cost, passport</li>
+      <li>After you've signed: renewal check, fee audit, deposit clock</li>
+      <li><a href="https://github.com/jeet-totla/landed-nyc" target="_blank" rel="noopener">github.com/jeet-totla/landed-nyc</a></li>
+    </ul>
+  </div>
+ </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <div class="word"><img src="assets/logo.svg" alt="">Landed</div>
+  <div class="fine">
+    <p><b>Landed</b> gives information, not legal advice. For help with a dispute call 311 or a tenant attorney. Built in one day for the NYC Founders Challenge by Jeet Totla, with Claude.</p>
+    <p>Rules last reviewed against primary sources on October 22, 2026: GOL §7-108, RPL §§214, 216, 226-c, 234, 235-b and 238-a, the DCWP FARE Act guidance, DHCR's 2026 Good Cause notice and the 2026 Rent Guidelines Board vote. Laws change; verify before you act.</p>
+  </div>
+</footer>
+
+<script src="engine.js"></script>
+<script src="lookup.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canAnim=()=>!reduce&&!!window.anime;
+document.documentElement.classList.add('js');
+
+/* theme */
+$('#theme').onclick=()=>{const r=document.documentElement;const cur=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.setAttribute('data-theme',cur==='dark'?'light':'dark');};
+
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+$$('.rv,.tile').forEach(el=>io.observe(el));
+setTimeout(()=>$$('.rv,.tile').forEach(el=>el.classList.add('in')),6000); // never leave content hidden
+
+/* tabs */
+const tabs=$$('.ri');
+function openTab(n,scroll){tabs.forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===n));$$('.pane').forEach(p=>p.hidden=p.id!=='p-'+n);if(scroll)$('#tool').scrollIntoView({behavior:reduce?'auto':'smooth'});}
+tabs.forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
+$$('[data-open]').forEach(a=>a.addEventListener('click',()=>openTab(a.dataset.open)));
+
+/* helpers */
+const SEV={high:'Stop',med:'Push back',low:'Note',info:'Note',ok:'OK'};
+function srcLinks(ids){return ids&&ids.length?'<div class="srcs">'+ids.map(i=>{const s=SRC[i];return '<a href="'+s.url+'" target="_blank" rel="noopener">'+esc(s.label)+' ↗</a>';}).join('')+'</div>':'';}
+function flagHTML(f){return '<article class="flag '+f.sev+'"><header><h4>'+esc(f.title||f.t)+'</h4>'+(f.over?'<span class="over">'+usd(f.over)+'</span>':'<span class="tagt">'+(SEV[f.sev]||'Note')+'</span>')+'</header>'
+  +(f.quote?'<blockquote>'+esc(f.quote)+'</blockquote>':'')+'<p>'+esc(f.why||f.d)+'</p>'+(f.ask?'<div class="ask"><b>What to say</b>'+esc(f.ask)+'</div>':'')+srcLinks(f.src)+'</article>';}
+function stagger(sel){if(canAnim())anime({targets:sel,opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:480,easing:'easeOutQuad'});}
+function copyBtn(pre,host){let b=document.createElement('button');b.className='btn quiet sm';b.style.marginTop='10px';b.textContent='Copy';host.after(b);
+  b.onclick=()=>{const t=pre.textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{b.textContent='Copied'}).catch(()=>{const rg=document.createRange();rg.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(rg);b.textContent='Selected, press copy';});setTimeout(()=>b.textContent='Copy',1800);};}
+
+/* ---------- checker ---------- */
+const DEMOS={
+d1:"Hi! Studio at 214 E 11th St, $3,400/month. To unlock the full address and schedule a viewing there's a $4,000 listing access fee, plus broker fee of 15% of annual rent paid by tenant. Application fee $150. Security deposit $6,800 (two months). First month in advance. Limited time, others waiting, send it today.",
+d2:"RESIDENTIAL LEASE RIDER, Unit 4C.\nThe monthly rent is $2,850 per month.\nSecurity deposit equal to two months' rent, $5,700.\nTenant shall pay a non-refundable move-in fee of $750 and an amenity fee of $120 per month.\nA late fee of $150 applies if rent is more than 1 day late.\nLandlord may enter the premises at any time without notice.\nTenant waives the warranty of habitability and agrees the apartment is accepted as is.\nTenant pays the landlord's attorney fees in any dispute.\nThis lease is between the landlord and tenant for the premises described above, for a term of twelve months, beginning on the first day of the month noted in the lease cover page.",
+d3:"Hello, I'm the owner and I'm currently overseas on a mission. Because I can't show the apartment, please send a $1,500 holding deposit by Zelle before viewing and I will mail you the keys. The agent is Alex from Prime NYC Realty, license pending. Send it today, others are waiting."};
+$$('.demo').forEach(b=>b.onclick=()=>{$$('.demo').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#txt').value=DEMOS[b.dataset.demo];$('#rent').value='';run();});
+function annotate(text,flags){const rs=[];flags.forEach(f=>(f.ats||(f.at?[f.at]:[])).forEach(a=>rs.push([a[0],a[1],f.sev])));rs.sort((a,b)=>a[0]-b[0]);let o='',p=0;rs.forEach(([s,e,v])=>{if(s<p)return;o+=esc(text.slice(p,s))+'<mark class="'+v+'">'+esc(text.slice(s,e))+'</mark>';p=e;});return o+esc(text.slice(p));}
+function draftText(r){
+  if(r.flags.some(f=>f.id==='scam')) return "Hello,\n\nBefore I go further I need to see the apartment in person and confirm who owns it. I will not send any payment before a viewing and a signed lease, and I will verify the owner and your licence number with the Department of State.\n\nIf that works for you, please send the address, the owner's name and your licence number.\n\nThank you.";
+  const items=r.flags.filter(f=>!['pressure','disc'].includes(f.id)).map((f,i)=>(i+1)+'. '+f.title+': '+f.ask);
+  return "Hello,\n\nThank you for the details. Before I move forward, I would like the following corrected or explained in writing:\n\n"+items.join('\n')+"\n\nI am happy to proceed once the terms follow New York law. Please also send the itemized fee disclosure required under the FARE Act.\n\nThank you.";
+}
+function wireDraft(r){
+  const mk=$('#mkdraft'),pre=$('#draftout');
+  mk.onclick=()=>{pre.hidden=false;pre.textContent=draftText(r);if(!$('#copyd')){copyBtn(pre,pre);pre.nextSibling.id='copyd';}
+    if(window.claude&&claude.use)claude.use('sample').then(sm=>{if(!sm)return;$('#lang').style.display='';$('#polish').style.display='';$('#polish').onclick=async()=>{const lang=$('#lang').value,btn=$('#polish');btn.disabled=true;btn.textContent='Writing…';
+      try{const res=await sm('Rewrite this message from a New York renter to a landlord or agent. Keep every point and a firm, polite tone. '+(lang?'Write it in '+lang+'.':'Keep it in English.')+' Return only the message.\n\n'+draftText(r),{modelTier:'quick'});pre.textContent=res.text;}catch(e){pre.textContent=draftText(r);}btn.disabled=false;btn.textContent='Rewrite in language';};}).catch(()=>{});};
+}
+function run(){
+  const text=$('#txt').value.trim();
+  if(!text){$('#out').innerHTML='<div class="empty"><b>Nothing to check yet</b>Paste some text, upload a file or pick a sample.</div>';return;}
+  const r=analyze(text,parseFloat($('#rent').value.replace(/,/g,''))||null);
+  const head={stop:['Do not pay yet','<b>'+r.hi+' serious issue'+(r.hi>1?'s':'')+'</b>'+(r.me?' and '+r.me+' to push back on':'')+'. Fix these before any money or signature.'],push:['Push back','<b>'+r.me+' term'+(r.me>1?'s':'')+'</b> should be corrected before you sign.'],minor:['Mostly fine','Only small notes. Read them, then you are in good shape.'],clean:['No red flags','These rules found nothing wrong. That is not a guarantee, so read the whole lease.']}[r.verdict];
+  let h='<div class="verdict '+r.verdict+'"><div class="vb">'+head[0]+'</div><p>'+head[1]+'</p></div><div class="facts2">'
+   +'<div class="fact '+(r.atRisk?'bad':'')+'"><small>Overcharged or at risk</small><strong>'+usd(r.atRisk)+'</strong></div><div class="fact"><small>Monthly rent</small><strong>'+(r.rent?usd(r.rent):'not found')+'</strong></div><div class="fact"><small>Flags</small><strong>'+r.flags.length+'</strong></div>'
+   +(r.demanded?'<div class="fact bad"><small>Asked at signing</small><strong>'+usd(r.demanded)+'</strong></div><div class="fact"><small>NYC-legal ceiling</small><strong>'+usd(r.ceiling)+'</strong></div>':'')+'</div>'
+   +'<label>Your text, marked up</label><div class="annot">'+annotate(text,r.flags)+'</div>'
+   +(r.flags.length?r.flags.map(flagHTML).join(''):'<article class="flag ok"><header><h4>Nothing tripped the rules</h4><span class="tagt">OK</span></header><p>Paste the full lease and any riders. Landed only judges the text you give it.</p></article>');
+  if(r.flags.length)h+='<div class="draft"><label>A reply you can send</label><div class="row" style="margin:0"><button class="btn quiet sm" id="mkdraft">Draft my reply</button><select id="lang" style="width:auto;display:none"><option value="">English</option><option>Simplified Chinese</option><option>Hindi</option><option>Korean</option><option>Spanish</option><option>Portuguese</option></select><button class="btn quiet sm" id="polish" style="display:none">Rewrite in language</button></div><pre id="draftout" hidden></pre></div>';
+  $('#out').innerHTML=h;if(r.flags.length)wireDraft(r);stagger('#out .flag');
+}
+$('#run').onclick=run;
+
+/* file upload: txt, pdf (pdf.js), photo (Claude) */
+async function readPdf(f){
+  if(!window.pdfjsLib)throw new Error('PDF reader did not load');
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;let out='';
+  for(let i=1;i<=Math.min(pdf.numPages,30);i++){const c=await(await pdf.getPage(i)).getTextContent();c.items.forEach(it=>{out+=it.str+(it.hasEOL?'\n':' ');});out+='\n';}
+  return out.replace(/[ \t]+\n/g,'\n').trim();
+}
+$('#file').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;const st=$('#fileStatus');st.textContent='Reading '+f.name+'…';
+  try{
+    let text='';
+    if(f.type.startsWith('image/')){
+      const sm=window.claude&&claude.use?await claude.use('sample'):null;
+      if(!sm||!(await sm.limits()).images)throw new Error('Photo reading needs Claude, which is not available in this view. Paste the text instead.');
+      const res=await sm('Transcribe all the text in this image of a rental lease, listing or message, exactly as written. Return only the text.',{images:[f],modelTier:'quick'});text=res.text;
+    }else if(/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name))text=await readPdf(f);
+    else text=await f.text();
+    if(text.trim().length<25)throw new Error('No readable text found. If this is a scan, upload a photo of each page instead.');
+    $('#txt').value=text.trim();$$('.demo').forEach(x=>x.classList.remove('on'));st.textContent='Loaded '+f.name+' ('+text.trim().length.toLocaleString()+' characters). Checking…';run();
+  }catch(err){st.textContent=err.message||'Could not read that file.';}
+  e.target.value='';
+};
+
+/* ---------- vet ---------- */
+$('#vrun').onclick=()=>{
+  const g=id=>parseFloat($('#'+id).value)||0;
+  const r=vet({units:g('v-units'),portfolio:g('v-portfolio'),c:g('v-c'),b:g('v-b'),a:g('v-a'),comp:g('v-comp'),lit:g('v-lit'),broker:$('#v-broker').value,harass:$('#v-harass').checked});
+  const head={high:['Be careful','The record shows serious signals.'],med:['Ask questions first','A few signals worth raising with the landlord.'],ok:['Looks quiet','Nothing here trips a warning threshold.']}[r.level];
+  let h='<div class="verdict '+{high:'stop',med:'push',ok:'clean'}[r.level]+'"><div class="vb">'+head[0]+'</div><p>'+head[1]+' Weighted violations per unit: <b>'+r.dens.toFixed(2)+'</b>.</p></div>'
+   +r.flags.map(f=>flagHTML(f)).join('')+'<div class="note">Landed\'s thresholds are a simple heuristic, not an official rating. Class C counts 3, Class B 1.5 and Class A 0.5.</div>';
+  $('#vout').innerHTML=h;stagger('#vout .flag');
+};
+
+
+/* ---------- live lookups ---------- */
+function lookupFail(e){return (e instanceof TypeError)?'Your browser blocked the live lookup, which happens inside some embedded views. Open Landed from its GitHub Pages or local copy, or use the links below and enter the counts.':(e&&e.message)||'Lookup failed.';}
+$('#lbld').onclick=async()=>{
+  const st=$('#lstat'),res=$('#lres');st.textContent='Looking up HPD records…';res.innerHTML='';
+  try{
+    const r=await lookupBuilding({boro:$('#l-boro').value,house:$('#l-house').value,street:$('#l-street').value});
+    if(!r.found){st.textContent='No HPD record matched. HPD matches the address literally: use the street exactly as HPD spells it, for example EAST 11 STREET or WEST 4 STREET.';return;}
+    $('#v-c').value=r.c;$('#v-b').value=r.b;$('#v-a').value=r.a;$('#v-comp').value=r.comp;$('#v-lit').value=r.lit;if(r.portfolio)$('#v-portfolio').value=r.portfolio;
+    st.textContent='Public data from NYC Open Data, fetched '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'.';
+    res.innerHTML='<div class="fact" style="margin-top:10px"><small>Registered owner</small><strong style="font-size:20px">'+esc(r.owner||'Not found')+'</strong>'+(r.portfolio?'<small style="margin-top:6px">'+r.portfolio+' buildings registered under this name</small>':'')+'</div>';
+    $('#vrun').click();
+  }catch(e){st.textContent=lookupFail(e);}
+};
+$('#lbrk').onclick=async()=>{
+  const st=$('#lstat'),res=$('#lres');st.textContent='Checking the licence database…';res.innerHTML='';
+  try{
+    const rows=await lookupBroker($('#l-broker').value);
+    if(!rows.length){$('#v-broker').value='unknown';st.textContent='No broker matched. The state dataset lists brokers and brokerages, so a salesperson will not appear by name. Search the brokerage instead, or ask the agent for a licence number and check it on the state lookup.';return;}
+    const act=rows.some(r=>r.active);$('#v-broker').value=act?'yes':'no';
+    st.textContent=act?'Active broker licence found. Confirm the person you are dealing with works for this brokerage.':'Matches found, but none is active.';
+    res.innerHTML=rows.map(r=>'<div class="fact" style="margin-top:8px"><small>'+esc(r.type||'Licence')+' · '+(r.active?'active':'expired')+' · expires '+esc(r.expires||'unknown')+'</small><strong style="font-size:18px">'+esc(r.business||r.name)+'</strong><small style="margin-top:4px">'+esc(r.name||'')+' · '+esc(r.number||'')+(r.city?' · '+esc(r.city):'')+'</small></div>').join('');
+  }catch(e){st.textContent=lookupFail(e);}
+};
+
+/* ---------- move-in ---------- */
+$('#mrun').onclick=()=>{
+  const rent=parseFloat($('#m-rent').value)||0;if(!rent){$('#mout').innerHTML='<div class="empty"><b>Enter the rent</b></div>';return;}
+  const r=moveIn({rent,income:parseFloat($('#m-inc').value)||0,credit:$('#m-credit').checked,guarantor:$('#m-guar').checked,months:parseFloat($('#m-months').value)||6});
+  const top=Math.max(...r.paths.map(p=>p.cash));
+  let h='<div class="verdict clean"><div class="vb">'+usd(r.lowCash.cash)+'</div><p>is the least cash you need at signing, through <b>'+esc(r.lowCash.name.toLowerCase())+'</b>. <b>'+usd(r.lowCash.nonref)+'</b> of it is not refundable.</p></div><div class="tbl">';
+  r.paths.forEach(p=>{h+='<div class="path '+(p.ok?'':'no ')+(p.id===r.lowCash.id?'best':'')+'"><h4>'+esc(p.name)+'<span>'+(p.ok?(p.id===r.lowCash.id?'Lowest cash needed':'You qualify'):'Not available to you')+'</span></h4>'
+    +'<div class="meter"><i style="width:'+(p.cash/top*100)+'%"></i></div><div class="nums"><div><small>Cash at signing</small><b>'+usd(p.cash)+'</b></div><div><small>Gone for good</small><b>'+usd(p.nonref)+'</b></div></div><p><b>What it takes.</b> '+esc(p.need)+'</p><p>'+esc(p.note)+'</p></div>';});
+  $('#mout').innerHTML=h+'</div><div class="note">Cash at signing includes the first month, a one-month deposit and a $20 background check. Under the FARE Act a landlord\'s broker cannot add a fee for you.</div>';stagger('#mout .path');
+};
+
+/* ---------- passport ---------- */
+$('#pprun').onclick=()=>{
+  const has={};$$('[data-pp]').forEach(c=>has[c.dataset.pp]=c.checked);
+  const rent=parseFloat($('#pp-rent').value)||0,funds=parseFloat($('#pp-funds').value)||0,name=$('#pp-name').value.trim()||'[Your name]';
+  const r=passport({has,rent,funds});
+  const letter="Renter passport for "+name+"\n\nI am applying for an apartment at "+usd(rent)+" a month. I am new to the United States and do not have a US credit history, so I am offering verified documents instead:\n\n"+(r.have.length?r.have.map(x=>'• '+x).join('\n'):'• (add your documents)')+"\n\nMy bank statements show "+usd(funds)+" available, which covers about "+r.months.toFixed(1)+" months of rent.\n\nI am happy to provide any of these in advance, to pay a one-month deposit, and to use a third-party guarantor if the building accepts one.\n\nThank you for considering my application.";
+  const label={strong:'Strong package',workable:'Workable package',thin:'Thin package'}[r.level];
+  let h='<div class="verdict '+(r.level==='strong'?'clean':r.level==='workable'?'push':'stop')+'"><div class="vb">'+label+'</div><p>'+r.pct+'% of what landlords usually ask a newcomer for. Funds cover <b>'+r.months.toFixed(1)+' months</b> of rent.</p></div><div class="meter"><i style="width:'+r.pct+'%"></i></div>';
+  if(r.miss.length)h+='<article class="flag med"><header><h4>Add these to be taken seriously</h4></header><p>'+r.miss.map(esc).join(', ')+'.</p></article>';
+  h+='<label>Your cover note</label><pre class="letter" id="ppl"></pre>';
+  $('#ppout').innerHTML=h;$('#ppl').textContent=letter;copyBtn($('#ppl'),$('#ppl'));stagger('#ppout .flag');
+};
+
+/* ---------- renewal ---------- */
+function toggleType(){const s=$('#r-type').value==='stabilized';$('#r-stab').hidden=!s;$('#r-mkt').hidden=s;}
+$('#r-type').onchange=toggleType;toggleType();
+$('#rrun').onclick=()=>{
+  const cur=parseFloat($('#r-cur').value)||0,prop=parseFloat($('#r-new').value)||0;if(!cur){$('#rout').innerHTML='<div class="empty"><b>Enter your current rent</b></div>';return;}
+  const r=renewal({type:$('#r-type').value,current:cur,proposed:prop,start:$('#r-start').value,cpi:parseFloat($('#r-cpi').value)||0,pre2009:$('#r-pre').checked,big:$('#r-big').checked,luxury:$('#r-lux').checked});
+  const bad=r.verdicts.some(v=>v.sev==='high');
+  let h='<div class="verdict '+(bad?'stop':(r.verdicts[0].sev==='ok'?'clean':'push'))+'"><div class="vb">'+(r.pct>=0?'+':'')+r.pct.toFixed(1)+'%</div><p>'+(r.max?(bad?'<b>'+usd(r.over)+' a year</b> above the limit.':'Inside the limit.'):'See the notes below.')+'</p></div>';
+  if(r.max){const top=Math.max(prop,r.max,cur)*1.05;const row=(l,v,c)=>'<div class="hbar" style="--c:'+c+'"><span>'+l+'</span><div class="tr" style="background:var(--bg)"><i style="--w:'+(v/top*100)+'%"></i><b>'+usd(v)+'</b></div></div>';
+    h+=row('Current',cur,'var(--soft)')+row(r.freeze?'Freeze limit':'Legal limit',r.max,'var(--go)')+row('Offered',prop,bad?'var(--flag)':'var(--go)');}
+  h+=r.verdicts.map(v=>'<article class="flag '+v.sev+'"><header><h4>'+esc(v.t)+'</h4><span class="tagt">'+(SEV[v.sev]||'Note')+'</span></header><p>'+esc(v.d)+'</p>'+srcLinks(v.src)+'</article>').join('');
+  $('#rout').innerHTML=h;stagger('#rout .flag');
+};
+
+/* ---------- fee audit ---------- */
+const FEEDEMO="Monthly rent: $2,400.\nBackground check fee: $75.\nLease renewal processing fee: $100.\nAmenity fee of $60 per month.\nA late fee of $120 applies if rent is more than 3 days late.";
+$('#fdemo').onclick=()=>{$('#f-txt').value=FEEDEMO;$('#f-stab').checked=true;$('#frun').click();};
+$('#frun').onclick=()=>{
+  const t=$('#f-txt').value.trim();if(!t){$('#fout').innerHTML='<div class="empty"><b>Paste some text first</b></div>';return;}
+  const stab=$('#f-stab').checked,r=feeAudit(t,stab);
+  let h='<div class="verdict '+(r.flags.length?'stop':'clean')+'"><div class="vb">'+(r.flags.length?usd(r.total):'Clean')+'</div><p>'+(r.flags.length?'in questionable fees across <b>'+r.flags.length+' item'+(r.flags.length>1?'s':'')+'</b>, counting monthly fees for 12 months.':'No fees tripped the rules in this text.')+'</p></div>';
+  h+=r.flags.map(flagHTML).join('');
+  if(r.flags.length)h+='<div class="draft"><label>Complaint draft</label><div class="row" style="margin:0"><button class="btn quiet sm" id="mkc">Draft the complaint</button></div><pre id="cout" hidden></pre></div>';
+  $('#fout').innerHTML=h;stagger('#fout .flag');
+  if(r.flags.length)$('#mkc').onclick=()=>{
+    const to=stab?'NY State Homes and Community Renewal (DHCR)':'NYC Department of Consumer and Worker Protection and the NY Attorney General';
+    const lines=r.flags.map((f,i)=>(i+1)+'. '+f.title+(f.over?' ('+usd(f.over)+')':'')+'\n   Text: "'+f.quote.replace(/\s+/g,' ').slice(0,160)+'"\n   Rule: '+(f.src||[]).map(k=>SRC[k].label).join('; '));
+    const pre=$('#cout');pre.hidden=false;pre.textContent='To: '+to+'\n\nI am a tenant in New York City and I am reporting fees that appear to violate New York law:\n\n'+lines.join('\n\n')+'\n\nI ask you to investigate and to require the landlord to remove and refund these charges.\n\nName: [your name]\nAddress: [apartment address]\nDate: '+new Date().toLocaleDateString('en-US')+'\n\nAttach: your lease or bill.';
+    if(!$('#copyc')){copyBtn(pre,pre);pre.nextSibling.id='copyc';}
+  };
+};
+
+/* ---------- deposit clock ---------- */
+(function(){const d=new Date();d.setDate(d.getDate()-9);$('#d-date').value=d.toISOString().slice(0,10);})();
+$('#drun').onclick=()=>{
+  const date=$('#d-date').value;if(!date){$('#dout').innerHTML='<div class="empty"><b>Pick your move-out date</b></div>';return;}
+  const amt=parseFloat($('#d-amt').value)||0,r=depositClock({moveOut:date});
+  const fmt=d=>d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const open=r.status==='open';
+  let h='<div class="verdict '+(open?'push':'stop')+'"><div class="big2">'+(open?r.left:Math.abs(r.left))+'</div><p>'+(open?'<b>days left</b> for your landlord to return '+usd(amt)+' or send an itemized statement. Deadline: '+fmt(r.deadline)+'.':'<b>days past the deadline</b> of '+fmt(r.deadline)+'. If you have not received your '+usd(amt)+' or an itemized statement, your landlord has forfeited the right to keep any of it.')+'</p></div>';
+  const name=$('#d-name').value.trim()||'[Your name]',ll=$('#d-ll').value.trim()||'[Landlord]',addr=$('#d-addr').value.trim()||'[Apartment address]';
+  const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const letter=open
+   ?today+'\n\nDear '+ll+',\n\nRe: Security deposit for '+addr+'\n\nI moved out on '+new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'. Under New York General Obligations Law §7-108(1-a), you must return my security deposit of '+usd(amt)+', or send an itemized statement of any deductions based on actual costs, within 14 days of that date, which is '+fmt(r.deadline)+'.\n\nPlease send the deposit to the forwarding address below.\n\nThank you,\n'+name
+   :today+'\n\nDear '+ll+',\n\nRe: Demand for return of security deposit, '+addr+'\n\nI vacated the apartment on '+new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'. Under New York General Obligations Law §7-108(1-a), you were required to return my security deposit of '+usd(amt)+', or provide an itemized statement, within 14 days, by '+fmt(r.deadline)+'. I have received neither.\n\nBecause that deadline has passed, you have forfeited any right to retain any part of the deposit. I demand payment of '+usd(amt)+' within 10 days of this letter. If I do not receive it, I will file a claim in New York City Civil Court (small claims) and ask for the deposit and costs.\n\nSincerely,\n'+name;
+  h+='<label>'+(open?'Reminder letter':'Demand letter')+'</label><pre class="letter" id="dl"></pre><div class="srcs"><a href="'+SRC.gol.url+'" target="_blank" rel="noopener">'+SRC.gol.label+' ↗</a></div>';
+  $('#dout').innerHTML=h;$('#dl').textContent=letter;copyBtn($('#dl'),$('#dl'));
+};
+
+/* ---------- problem charts ---------- */
+function lineChart(){
+  const W=620,H=300,L=44,R=40,T=30,B=46,xmax=338,ymax=2200;
+  const X=d=>L+d/xmax*(W-L-R),Y=v=>H-B-v/ymax*(H-B-T);
+  const a=[[0,562,'Jul 2025'],[254,1400,'Mar 2026'],[338,2000,'Jun 2026']],b=[[254,50],[338,74]];
+  const p=a.map((q,i)=>(i?'L':'M')+X(q[0]).toFixed(1)+' '+Y(q[1]).toFixed(1)).join(' ');
+  const p2='M'+b.map(q=>X(q[0]).toFixed(1)+' '+Y(q[1]).toFixed(1)).join(' L');
+  let g='';[0,500,1000,1500,2000].forEach(v=>{g+='<line class="dim" x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text class="ax" x="'+(L-8)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+v.toLocaleString()+'</text>';});
+  const dots=a.map(q=>'<circle cx="'+X(q[0])+'" cy="'+Y(q[1])+'" r="6" fill="var(--hl)"/><text class="lb" x="'+X(q[0])+'" y="'+(Y(q[1])-14)+'" text-anchor="'+(q[0]>300?'end':'middle')+'">'+(q[1]>=2000?'2,000+':q[1].toLocaleString())+'</text><text class="ax" x="'+X(q[0])+'" y="'+(H-B+22)+'" text-anchor="'+(q[0]>300?'end':q[0]===0?'start':'middle')+'">'+q[2]+'</text>').join('');
+  const dots2=b.map(q=>'<circle cx="'+X(q[0])+'" cy="'+Y(q[1])+'" r="5" fill="var(--field-ink)"/>').join('')+'<text class="lb" x="'+X(338)+'" y="'+(Y(74)-12)+'" text-anchor="end">74 summonses</text>';
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Line chart: complaints rose from 562 in July 2025 to 1,400 in March 2026 and more than 2,000 in June 2026, while summonses were about 50 and then 74.">'+g+'<path class="draw" pathLength="1" d="'+p+'" fill="none" stroke="var(--hl)" stroke-width="4" stroke-linejoin="round"/><path class="draw" pathLength="1" d="'+p2+'" fill="none" stroke="var(--field-ink)" stroke-width="3" stroke-dasharray="none"/>'+dots+dots2+'<text class="ax" x="'+L+'" y="14">Complaints and inquiries</text></svg>';
+}
+function donut(){
+  const segs=[['China',34,'#FFE14D'],['India',25.8,'#7BD3A0'],['South Korea',4.4,'#8FB8FF'],['Canada',4,'#F2A88F'],['Taiwan',1.8,'#D6C2F5'],['All others',30,'#4A7A5E']];
+  const r=66,C=2*Math.PI*r;let off=0,s='';
+  segs.forEach(g=>{const len=g[1]/100*C;s+='<circle r="'+r+'" cx="90" cy="90" fill="none" stroke="'+g[2]+'" stroke-width="22" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 90 90)"/>';off+=len;});
+  return '<div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 180 180" width="170" height="170" role="img" aria-label="Donut chart of international student origins in New York State">'+s+'<text x="90" y="88" text-anchor="middle" font-family="var(--f-display)" font-weight="800" font-size="24" fill="var(--field-ink)">137.8K</text><text x="90" y="106" text-anchor="middle" class="ax">students</text></svg><div class="legend" style="flex-direction:column;margin:0">'+segs.map(g=>'<span><i style="--c:'+g[2]+'"></i>'+g[0]+' '+g[1]+'%</span>').join('')+'</div></div>';
+}
+function stack(){
+  const rent=5395,legal=[['First month',rent],['Deposit',rent],['Check',20]],ill=[['Broker fee, 15% of annual rent',rent*12*.15],['Hidden-listing access',4000],['Junk fees',1140]];
+  const lt=legal.reduce((n,x)=>n+x[1],0),it=ill.reduce((n,x)=>n+x[1],0),tot=lt+it,pc=v=>(v/tot*100).toFixed(2)+'%';
+  const bar=(items,cols)=>'<div class="bar">'+items.map((x,i)=>'<div class="seg" style="--w:'+pc(x[1])+';--c:'+cols[i]+'" title="'+x[0]+'">'+(x[1]/tot>.07?x[0]+' '+usd(x[1]):'')+'</div>').join('')+'</div>';
+  return '<div class="stk"><div class="row"><div><b>What the law allows</b><div class="tot">'+usd(lt)+'</div></div>'+bar(legal,['#7BD3A0','#5DBE88','#9FE0BC'])+'</div><div class="row"><div><b>What an illegal stack adds</b><div class="tot" style="color:var(--hl)">'+usd(lt+it)+'</div></div><div class="bar">'+legal.map((x,i)=>'<div class="seg" style="--w:'+pc(x[1])+';--c:'+['#7BD3A0','#5DBE88','#9FE0BC'][i]+'">'+(x[1]/tot>.07?x[0]:'')+'</div>').join('')+ill.map((x,i)=>'<div class="seg" style="--w:'+pc(x[1])+';--c:'+['#FFE14D','#FFC24D','#FFA94D'][i]+'">'+(x[1]/tot>.07?x[0]+' '+usd(x[1]):'')+'</div>').join('')+'</div></div></div>';
+}
+$('#c-line').innerHTML=lineChart();$('#c-donut').innerHTML=donut();$('#c-stack').innerHTML=stack();
+
+/* press headlines */
+const CLIPS=[
+['Bloomberg Law · Aug 12, 2026','NYC Brokers Are Charging Renters $4,000 to View Hidden Listings','A new paywall appears a year after the broker-fee ban.','https://news.bgov.com/new-york-brief/nyc-brokers-are-charging-renters-4-000-to-view-hidden-listings'],
+['The Real Deal · Jun 10, 2026','FARE Act generates thousands of complaints, tenant refunds in first year','<em>2,000+</em> complaints, 74 summonses, about $27K in penalties.','https://therealdeal.com/new-york/2026/06/10/fare-act-sparks-thousands-of-complaints-refunds-in-year-1/'],
+['The Real Deal · Mar 17, 2026','Enforcement lags as broker fee complaints mount under FARE Act','The city has taken action on a small share of what it receives.','https://therealdeal.com/new-york/2026/03/17/enforcement-lags-as-complaints-mount-under-fare-act/'],
+['Hoodline · Mar 18, 2026','NYC FARE Act: Few Refunds, Many Complaints','<em>1,400+</em> complaints; two brokers ordered to refund $4,480 and $2,500.','https://hoodline.com/2026/03/nyc-renters-fume-as-fare-act-refunds-barely-trickled-in/'],
+['Brooklyn Downtown Star · Jul 15, 2025','NYC Banned These Broker Fees in June. Why Are So Many Brooklynites Still Paying Them?','Renters can face <em>$10,000+</em> in combined fees and deposits to move in.','https://brooklyndowntownstar.com/uncategorized/2025/07/15/nyc-banned-these-broker-fees-in-june-why-are-so-many-brooklynites-still-paying-them/'],
+['6sqft · Oct 2026','Manhattan median rent hits record $5,395/month in September','Vacancy at <em>1.54%</em>. Listings down 16% in a year.','https://www.6sqft.com/manhattan-median-rent-hits-record-5395-month-in-september/']];
+$('#clips').innerHTML=CLIPS.map((c,i)=>'<a class="clip rv" style="--d:'+(i%3*90)+'ms" href="'+c[3]+'" target="_blank" rel="noopener"><span class="o">'+c[0]+'</span><h4>'+c[1]+'</h4><p>'+c[2]+'</p></a>').join('');
+$$('.clip').forEach(el=>io.observe(el));
+
+/* hero motion: the final state is already in the HTML */
+if(canAnim()){
+  const ms=$$('#herodoc .m'),chips=$$('#herodoc .chip'),hlh=$('.hero .hl'),h1=$('.hero h1');
+  hlh.style.setProperty('--s',0);ms.forEach(m=>m.style.setProperty('--sx',0));
+  chips.forEach(c=>c.style.opacity=0);$('#herodoc .total').style.opacity=0;$('#heroTotal').textContent='$0';
+  const tl=anime.timeline({easing:'easeOutQuad',delay:150});
+  tl.add({targets:h1,opacity:[0,1],translateY:[24,0],duration:600});
+  tl.add({targets:{v:0},v:1,duration:520,easing:'easeInOutSine',update:a=>hlh.style.setProperty('--s',a.animations[0].currentValue)},'-=200');
+  ms.forEach((m,i)=>{
+    tl.add({targets:{v:0},v:1,duration:340,easing:'easeInOutSine',update:a=>m.style.setProperty('--sx',a.animations[0].currentValue)});
+    if(i>0&&chips[i-1])tl.add({targets:chips[i-1],opacity:[0,1],translateX:[-10,0],duration:260},'-=100');
+  });
+  tl.add({targets:'#herodoc .total',opacity:[0,1],duration:300});
+  const o={v:0};tl.add({targets:o,v:9650,round:1,duration:800,easing:'easeOutExpo',update:()=>{$('#heroTotal').textContent=usd(o.v);}},'-=200');
+  const co=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;co.unobserve(e.target);const el=e.target,to=+el.dataset.count,o2={v:0};
+    anime({targets:o2,v:to,round:1,duration:1400,easing:'easeOutExpo',update:()=>{el.textContent=(el.dataset.pre||'')+Math.round(o2.v).toLocaleString('en-US');}});}),{threshold:.6});
+  $$('[data-count]').forEach(el=>co.observe(el));
+}
+})();
+</script>

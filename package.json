@@ -1,0 +1,10 @@
+{
+  "name": "landed-nyc",
+  "version": "0.1.0",
+  "description": "Renter protection for New York City: check leases, listings, landlords and renewals against the law.",
+  "private": true,
+  "scripts": {
+    "test": "node tests/engine.test.js && node tests/lookup.test.js",
+    "build": "python3 build.py"
+  }
+}

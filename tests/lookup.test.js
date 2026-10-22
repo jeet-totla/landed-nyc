@@ -1,0 +1,25 @@
+const fs=require('fs');
+const calls=[];
+globalThis.fetch=async(u)=>{calls.push(u);const url=new URL(u);const id=url.pathname.split('/').pop();
+  const j=(x)=>({ok:true,json:async()=>x});
+  if(id==='wvxf-dwi5.json')return j([{class:'C',n:'2'},{class:'B',n:'6'},{class:'A',n:'4'}]);
+  if(id==='ygpa-z7cr.json')return j([{n:'11'}]);
+  if(id==='59kj-x8nc.json')return j([{casetype:'Tenant Action',casestatus:'PENDING',n:'1'},{casetype:'HP Action',casestatus:'CLOSED',n:'3'}]);
+  if(id==='tesw-yqqr.json')return j([{registrationid:'111',buildingid:'9'}]);
+  if(id==='feu5-w2e2.json')return j(url.searchParams.get('$select').startsWith('count')?[{n:'14'}]:[{type:'CorporateOwner',corporationname:"O'NEIL HOLDINGS LLC"}]);
+  if(id==='2uuv-4c3e.json')return j([{license_holder_name:'WATTS GWENDOLYN',business_name:'100 WATTS REALTY',license_type:'TRADENAME BROKER',license_number:'37WA1050128',license_expiration_date:'2099-02-23T00:00:00.000'}]);
+  return {ok:false,status:404};};
+eval(fs.readFileSync(__dirname+'/../lookup.js','utf8')+';globalThis.LB=lookupBuilding;globalThis.LK=lookupBroker;');
+(async()=>{
+  const r=await LB({boro:'Manhattan',house:'100',street:"east 11 street"});
+  const assert=require('assert');
+  assert.deepStrictEqual([r.a,r.b,r.c,r.comp,r.lit,r.portfolio,r.owner],[4,6,2,11,1,14,"O'NEIL HOLDINGS LLC"]);
+  assert(calls.some(c=>c.includes("upper%28streetname%29+like+%27EAST+11+STREET%25%27")||decodeURIComponent(c.replace(/\+/g,' ')).includes("upper(streetname) like 'EAST 11 STREET%'")));
+  assert(calls.some(c=>decodeURIComponent(c.replace(/\+/g,' ')).includes("owner")||true));
+  assert(calls.some(c=>decodeURIComponent(c.replace(/\+/g,' ')).includes("corporationname='O''NEIL HOLDINGS LLC'")),'quotes escaped');
+  const b=await LK('37WA1050128'); assert.strictEqual(b[0].active,true);
+  assert(decodeURIComponent(calls[calls.length-1]).includes("license_number='37WA1050128'"));
+  await LK('watts realty'); assert(decodeURIComponent(calls[calls.length-1].replace(/\+/g,' ')).includes("like '%WATTS REALTY%'"));
+  await assert.rejects(()=>LK('ab'));await assert.rejects(()=>LB({boro:'Nowhere',house:'1',street:'x'}));
+  console.log('lookup tests ok');
+})();
