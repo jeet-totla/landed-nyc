@@ -24,15 +24,15 @@ ol{padding-left:14px}ol li{margin-bottom:3.2px}
 table{width:100%;border-collapse:collapse;font-size:7.9pt}
 td{padding:3.4px 6px 3.4px 0;border-top:1px solid var(--line);vertical-align:top}
 td:first-child{font-weight:700;width:30%}
-.me{background:#fff;border-left:4px solid var(--go);padding:6px 9px;margin-top:6px;font-size:8pt}
+.me{background:#fff;border-left:4px solid var(--go);padding:5px 9px;margin-top:5px;font-size:7.8pt}
 .me b{color:var(--go)}
 .shots{display:grid;grid-template-columns:1.25fr 1fr 1.35fr .8fr;gap:7px;margin-top:6px;align-items:end}
 .shots figure{margin:0}.shots img{width:100%;height:.7in;object-fit:cover;object-position:top;display:block;border:1px solid var(--line)}
 .shots figcaption{font-size:6.8pt;color:var(--mut);margin-top:2px;line-height:1.25}
-.foot{margin-top:auto;padding:7px 0 .3in;border-top:1px solid var(--line);font-size:6.9pt;color:var(--mut);line-height:1.35}
+.foot{margin-top:auto;padding:6px 0 .22in;border-top:1px solid var(--line);font-size:6.9pt;color:var(--mut);line-height:1.35}
 .wide{grid-column:1/-1}
 a{color:inherit}
-.biz{display:grid;grid-template-columns:.8fr 2.2fr 1.1fr;gap:.2in;background:#fff;border-top:3px solid var(--ink);padding:8px 10px}.biz h3{font-size:7.4pt;text-transform:uppercase;letter-spacing:.08em;color:var(--go);margin-bottom:3px}.biz ul{padding-left:12px;column-count:2;column-gap:14px}.biz li{break-inside:avoid}.biz li{margin-bottom:2px}.diff{border-left:4px solid var(--hl);padding:2px 9px;font-size:8.6pt}
+.biz{display:grid;padding:6px 10px!important;grid-template-columns:.8fr 2.2fr 1.1fr;gap:.2in;background:#fff;border-top:3px solid var(--ink);padding:8px 10px}.biz h3{font-size:7.4pt;text-transform:uppercase;letter-spacing:.08em;color:var(--go);margin-bottom:3px}.biz ul{padding-left:12px;column-count:2;column-gap:14px}.biz li{break-inside:avoid}.biz li{margin-bottom:2px}.diff{border-left:4px solid var(--hl);padding:2px 9px;font-size:8.6pt}
 .top h1{display:flex;align-items:center;gap:10px}.lg{height:.8em;width:.8em}
 .build .shots2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.build .shots2 img{width:100%;height:.9in;object-fit:cover;object-position:top;display:block;border:1px solid var(--line)}.build .shots2 figcaption{font-size:6.5pt;color:var(--mut);line-height:1.2;margin-top:2px}.build figure{margin:0}.links a{font-weight:700}.links div{padding:3px 0;border-top:1px solid var(--line)}
 .foot{font-size:6.6pt;line-height:1.38}.foot b{color:var(--ink)}
@@ -44,7 +44,7 @@ a{color:inherit}
 <section><h2>The problem</h2>
 <p>In June 2025 the FARE Act made landlords pay their own brokers. A year later renters still pay fees nobody can explain, and nobody checks your paperwork before you pay. It hits newcomers hardest: students and workers arriving from abroad have no US credit history, no local guarantor and no way to tell a legal fee from an illegal one. 137,799 international students rent in New York State alone.</p>
 <div class="nums"><div><b>$4,000</b>to see a hidden listing (Bloomberg Law, Aug 2026)</div><div><b>74</b>summonses for 2,000+ complaints (The Real Deal, Jun 2026)</div><div><b>$5,395</b>Manhattan median rent (6sqft, Sep 2026)</div></div>
-<p>I moved to New York this term with TETR, which relocates students to a new country every semester, so this is close to home.</p></section>
+<p>As a student who wishes to work in New York City, I think a tool like this would be extremely helpful and a real resource.</p></section>
 
 <section><h2>The solution</h2>
 <p>Landed checks a lease, listing or renewal offer against New York law and cites the rule behind every flag. Rules decide. AI only explains and drafts the reply. Ten tools cover two moments:</p>
@@ -60,11 +60,9 @@ a{color:inherit}
 <div><h3>Why it's credible</h3>One caught fee is worth more than any price: no broker fee saves $5,454 upfront on average (StreetEasy via Hoodline). Rules are fixed and data is open, so it costs little to run. Next test: a pilot with one student cohort.</div></div></section>
 
 <section><h2>Process, AI toolkit and my part</h2>
-<p><b>Process.</b> Spotted the problem in reporting and the law. Checked every rule and number against statutes and agency pages (dated in docs/RULES.md). Built a tested rules engine with live HPD and licence lookups, then tested on desktop and phone.</p>
-<table style="margin-top:5px"><tr><td>Claude (Sonnet 5.5)</td><td>Research, rules engine, site code, tests, copy.</td></tr>
-<tr><td>Claude in the product</td><td>Rewrites replies in other languages, reads lease photos. Never decides what is illegal.</td></tr>
-<tr><td>Playwright, Taste, Awwwards</td><td>Browser tests, screenshots, design rules.</td></tr></table>
-<div class="me"><b>Claude wrote most of the code.</b> I set the direction and made the calls: the two-moment structure, "rules decide, AI explains", open source. I required every statistic and statute to be checked against its source, removed an unsupported licence claim, asked for the live lookups, directed the design, and chose the extra tools (map, heat helper, stabilization screener, move-in log).</div></section>
+<p><b>Process.</b> Researched the problem and the law, checked every rule and number against sources (dated in docs/RULES.md), then built and tested a rules engine with live HPD and licence lookups.</p>
+<table style="margin-top:5px"><tr><td>Claude Code (Sonnet 5.5)</td><td>Research, rules engine, website code, tests, copy. In the site it rewrites replies in other languages and reads lease photos; it never decides what is illegal.</td></tr><tr><td>Playwright, Taste, Awwwards</td><td>Browser tests, screenshots, design rules.</td></tr></table>
+<div class="me"><b>Claude Code did the research legwork and wrote the code. The thinking was mine.</b> I identified the problem and pushed deeper into it, proposed the products that could solve it, and decided how the whole thing works: how each tool functions, how each one links to New York City sources, and how the website looks. I supplied the design examples and resources, steered the research we found together, and reviewed the output, from checking statistics and statutes to removing an unsupported licence claim. I told Claude what to build and why, and Claude built it.</div></section>
 
 <section class="build"><h2>The build</h2>
 <div class="links"><div><b>Working build:</b> <a href="https://jeet-totla.github.io/landed-nyc/">jeet-totla.github.io/landed-nyc</a></div><div><b>Code (open source):</b> <a href="https://github.com/jeet-totla/landed-nyc">github.com/jeet-totla/landed-nyc</a></div></div>

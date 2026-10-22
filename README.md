@@ -78,11 +78,10 @@ Every rule lives in [`engine.js`](engine.js) with its citation beside it, and [`
 
 | Tool | How it was used |
 | --- | --- |
-| Claude (Sonnet 5.5) | Research, rules engine, site code, tests and copy |
-| Claude inside the product | Rewrites replies in other languages and reads lease photos. It never decides what is illegal |
+| Claude Code (Sonnet 5.5) | Research, rules engine, website code, tests and copy. Inside the site it rewrites replies in other languages and reads lease photos, and never decides what is illegal |
 | Playwright, Taste and Awwwards skills | Browser tests, screenshots and design review rules |
 
-**Claude wrote most of the code.** I set the direction and made the calls: the two-moment structure, "rules decide, AI explains", and open source. I required every statistic and statute to be checked against its source, removed an unsupported licence claim, asked for the live lookups, directed the design, and chose the extra tools: the complaint map, heat helper, stabilization screener and move-in log.
+**Claude Code did the research legwork and wrote the code. The thinking was mine.** I identified the problem and pushed deeper into it, proposed the products that could solve it, and decided how the whole thing works: how each tool functions, how each one links to New York City sources, and how the website looks. I supplied the design examples and resources, steered the research we found together, and reviewed the output, from checking statistics and statutes to removing an unsupported licence claim. I told Claude what to build and why, and Claude built it.
 
 ## Run it locally
 
