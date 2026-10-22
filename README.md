@@ -28,6 +28,10 @@ New York made landlords pay for their own brokers in June 2025. A year later ren
 
 <p align="center"><img src="docs/screens/problem.jpg" alt="Charts: complaints versus summonses, renewal increases, Manhattan rent, student origins, and the cost stack at signing" width="860"></p>
 
+Broker-fee complaints to 311 since the FARE Act took effect: **186**, with Brooklyn 67, Queens 46 and Manhattan 41 itemised; the Bronx and Staten Island are not broken out ([Hoodline, Mar 2026](https://hoodline.com/2026/03/nyc-renters-fume-as-fare-act-refunds-barely-trickled-in/)).
+
+<p align="center"><img src="docs/screens/map.jpg" alt="Schematic map of the five boroughs sized by broker-fee complaints" width="860"></p>
+
 ## What it does
 
 | | Tool | What you get |
@@ -36,14 +40,16 @@ New York made landlords pay for their own brokers in June 2025. A year later ren
 | | Vet landlord and broker | Live HPD record (open violations by class, complaints, litigation, registered owner and portfolio) and a broker licence check, read in plain English with questions to ask. |
 | | True move-in cost | Compares income, personal guarantor, guarantor company and prepaid rent: cash at signing and money you never get back. |
 | | Renter passport | A document checklist and cover note for people with no US credit history. |
-| **After you've signed** | Renewal check | Good Cause cap for market-rate apartments, rent freeze for stabilized ones, with the exact yearly overcharge. |
-| | Fee audit | Finds fees New York does not allow in a lease or bill and drafts a DCWP, Attorney General or DHCR complaint. |
 | | Is it rent-stabilized? | Screens by building size, year and type, then drafts the rent-history request to HCR and can feed the renewal check. |
 | | Move-in condition log | Room-by-room checklist that produces a dated log to email to your landlord. |
+| **After you've signed** | Renewal check | Good Cause cap for market-rate apartments, rent freeze for stabilized ones, with the exact yearly overcharge. |
+| | Fee audit | Finds fees New York does not allow in a lease or bill and drafts a DCWP, Attorney General or DHCR complaint. |
 | | Heat and hot water | Enter date, time and temperatures. Shows the HPD minimum and drafts the 311 complaint. |
 | | Deposit clock | 14-day countdown, then a reminder or demand letter. |
 
 <p align="center"><img src="docs/screens/checker.jpg" alt="The lease and listing checker flagging a hidden-listing fee, a broker fee, an application fee and a two-month deposit" width="860"></p>
+
+<p align="center"><img src="docs/screens/heat.jpg" alt="Heat and hot water helper showing a 68 degree minimum and a drafted 311 complaint" width="860"></p>
 
 ## How it works
 

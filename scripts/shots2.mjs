@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';
+const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const c=await b.newContext({viewport:{width:1360,height:900}});const p=await c.newPage();
+await p.route('**/animejs/**',r=>r.fulfill({path:'node_modules/animejs/lib/anime.min.js',contentType:'text/javascript'}));await p.route('**/pdf.js/**',r=>r.abort());
+await p.goto('file:///home/claude/landed/dist/landed.html');
+await p.addStyleTag({content:'nav,header.nav,.nav{position:static!important}'});
+await p.evaluate(()=>document.querySelectorAll('.rv,.tile').forEach(e=>e.classList.add('in')));
+await p.locator('.t-map').screenshot({path:'docs/screens/map.jpg',type:'jpeg',quality:82});
+await p.click('[data-tab=heat]');await p.click('#hrun');await p.locator('#p-heat').screenshot({path:'docs/screens/heat.jpg',type:'jpeg',quality:82});
+await b.close();
