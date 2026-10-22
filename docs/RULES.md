@@ -18,7 +18,17 @@ Landed gives information, not legal advice. Laws change, so re-verify before you
 | Habitability waiver | A tenant cannot waive the warranty of habitability | RPL §235-b | not re-read |
 | Reciprocal legal fees | A clause making the tenant pay the landlord's legal fees runs both ways | RPL §234 | not re-read |
 | Entry with notice | Reasonable notice before entry except in emergencies | NYC Admin. Code §27-2008 (cited via NY AG guidance) | not re-read |
+| Heat season | October 1 to May 31 | HPD heat and hot water page | 2026-10-22 |
+| Heat minimums | 6am to 10pm: 68°F inside when outside is below 55°F. 10pm to 6am: 62°F inside regardless of outside | HPD | 2026-10-22 |
+| Hot water | At least 120°F, 365 days a year | HPD | 2026-10-22 |
+| Heat penalties | $250 to $500 a day for a first heat or hot water violation | HPD | 2026-10-22 |
+| Complaints | Tell the landlord first, then 311; anonymous complaints are allowed | HPD | 2026-10-22 |
+| Stabilization screen | Rental building with 6 or more apartments built before 1974, not a co-op or condo | 311 article KA-02346 | 2026-10-22 |
+| Stabilization via tax benefit | Newer buildings with 421-a or J-51 benefits can be stabilized | HCR guidance | not re-read; shown only as "possible" |
+| Rent history request | Online portal, in person, or form REC-1 by mail or email; only the legal tenant or owner can get it | HCR tenant issues page | 2026-10-22 |
 | Stabilized tenants | No background-check or renewal processing fees in occupancy; legal fees only if court-ordered | DHCR guidance | not re-read |
+
+Complaint counts on the map (186 total, Brooklyn 67, Queens 46, Manhattan 41) come from Hoodline, 2026-03-18, reporting 311 data. Not independently checked against 311. The Bronx and Staten Island are not itemised.
 
 ## Heuristics that are not law
 

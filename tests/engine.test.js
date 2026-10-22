@@ -1,4 +1,4 @@
-const fs=require('fs');eval(fs.readFileSync(__dirname+'/../engine.js','utf8')+';globalThis.A=analyze;globalThis.R=renewal;globalThis.V=vet;globalThis.M=moveIn;globalThis.D=depositClock;globalThis.P=passport;globalThis.F=feeAudit;');
+const fs=require('fs');eval(fs.readFileSync(__dirname+'/../engine.js','utf8')+';globalThis.A=analyze;globalThis.R=renewal;globalThis.V=vet;globalThis.M=moveIn;globalThis.D=depositClock;globalThis.P=passport;globalThis.F=feeAudit;globalThis.H=heat;globalThis.S=stabilized;');
 const demos={
 hero:`Monthly rent: $3,400
 Security deposit: $6,800 (two months)
@@ -15,3 +15,10 @@ console.log(JSON.stringify(M({rent:3400,income:90000,credit:false,guarantor:fals
 console.log(D({moveOut:'2026-10-01',today:new Date('2026-10-22T12:00:00')}).left, D({moveOut:'2026-10-10',today:new Date('2026-10-22T12:00:00')}).left);
 console.log(P({has:{id:1,funds:1,offer:1},funds:40000,rent:3400}));
 console.log(F('Background check fee $75. Renewal fee $100.',true).total);
+
+const assert=require('assert');
+assert.deepStrictEqual([H({date:'2026-11-10',outside:40,hour:14}).min,H({date:'2026-11-10',outside:60,hour:14}).required,H({date:'2026-11-10',outside:70,hour:23}).min,H({date:'2026-07-10',outside:40,hour:14}).required,H({date:'2026-05-31',outside:40,hour:2}).min,H({date:'2026-06-01',outside:40,hour:2}).required,H({date:'2026-10-01',outside:50,hour:6}).min,H({date:'2026-10-01',outside:50,hour:22}).min],[68,false,62,false,62,false,68,62]);
+assert.strictEqual(H({date:'2026-12-01',outside:30,hour:12,indoor:66}).violation,true);
+assert.strictEqual(H({date:'2026-12-01',outside:30,hour:12,hotTemp:110}).hotViolation,true);
+assert.deepStrictEqual([S({type:'rental',units:12,built:1960}).verdict,S({type:'coop',units:12,built:1960}).verdict,S({type:'rental',units:4,built:1930}).verdict,S({type:'rental',units:20,built:1990,taxBenefit:true}).verdict,S({type:'rental',units:4,built:1990,mentioned:true}).verdict],['likely','unlikely','unlikely','possible','likely']);
+console.log('heat+stab ok');

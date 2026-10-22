@@ -38,6 +38,9 @@ New York made landlords pay for their own brokers in June 2025. A year later ren
 | | Renter passport | A document checklist and cover note for people with no US credit history. |
 | **After you've signed** | Renewal check | Good Cause cap for market-rate apartments, rent freeze for stabilized ones, with the exact yearly overcharge. |
 | | Fee audit | Finds fees New York does not allow in a lease or bill and drafts a DCWP, Attorney General or DHCR complaint. |
+| | Is it rent-stabilized? | Screens by building size, year and type, then drafts the rent-history request to HCR and can feed the renewal check. |
+| | Move-in condition log | Room-by-room checklist that produces a dated log to email to your landlord. |
+| | Heat and hot water | Enter date, time and temperatures. Shows the HPD minimum and drafts the 311 complaint. |
 | | Deposit clock | 14-day countdown, then a reminder or demand letter. |
 
 <p align="center"><img src="docs/screens/checker.jpg" alt="The lease and listing checker flagging a hidden-listing fee, a broker fee, an application fee and a two-month deposit" width="860"></p>

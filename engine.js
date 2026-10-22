@@ -13,7 +13,11 @@ const SRC={
  ag:{label:'NY Attorney General · tenant rights',url:'https://ag.ny.gov/consumer-frauds/tenants-rights'},
  ftc:{label:'FTC · rental listing scams',url:'https://consumer.ftc.gov/articles/rental-listing-scams'},
  dos:{label:'NYS licence lookup',url:'https://appext20.dos.ny.gov/lcns_public/lic_name_search_frm'},
- dhcr:{label:'NY HCR · rent regulation',url:'https://hcr.ny.gov/'}
+ dhcr:{label:'NY HCR · rent regulation',url:'https://hcr.ny.gov/'},
+ heat:{label:'HPD · heat and hot water',url:'https://www.nyc.gov/site/hpd/services-and-information/heat-and-hot-water-information.page'},
+ hcrissues:{label:'HCR · tenant rent regulation issues and rent history',url:'https://hcr.ny.gov/most-common-rent-regulation-issues-tenants'},
+ hcrsearch:{label:'HCR · rent regulated building search',url:'https://hcr.ny.gov/rent-regulated-building-search'},
+ stab311:{label:'311 · rent stabilized apartments',url:'https://portal.311.nyc.gov/article/?kanumber=KA-02346'}
 };
 const num=s=>parseFloat(String(s).replace(/,/g,''));
 const usd=n=>'$'+Math.round(n).toLocaleString('en-US');
@@ -298,5 +302,41 @@ function feeAudit(text,stabilized){
   flags=flags.filter(f=>f.id==='dhcr'||!dh.includes(f.at&&f.at[0]));
   const total=flags.reduce((n,f)=>n+(f.over||0),0);
   return {flags,total,rent:r.rent};
+}
+
+/* ---------- heat and hot water ---------- */
+function heat(o){
+  const d=new Date(o.date+'T00:00:00'),m=d.getMonth()+1;
+  const season=m>=10||m<=5;               // Oct 1 to May 31
+  const h=o.hour,day=h>=6&&h<22;          // 6am to 10pm
+  const out={season,period:day?'day':'night',hotWater:120,outside:o.outside};
+  if(!season){out.required=false;out.min=null;out.reason='Outside heat season (October 1 to May 31), so there is no heat minimum. Hot water is still required all year.';}
+  else if(day){
+    if(o.outside<55){out.required=true;out.min=68;out.reason='Daytime (6am to 10pm) with an outside temperature below 55°F: the apartment must be at least 68°F.';}
+    else{out.required=false;out.min=null;out.reason='Daytime with an outside temperature of 55°F or higher: no heat minimum applies right now.';}
+  }else{out.required=true;out.min=62;out.reason='Night (10pm to 6am): the apartment must be at least 62°F whatever the outside temperature.';}
+  if(o.indoor!=null&&!isNaN(o.indoor)&&out.required)out.violation=o.indoor<out.min;
+  if(o.hotTemp!=null&&!isNaN(o.hotTemp))out.hotViolation=o.hotTemp<120;
+  return out;
+}
+/* ---------- rent stabilization screener ---------- */
+function stabilized(o){
+  const why=[],against=[];
+  if(o.type!=='rental'){against.push('Co-ops and condos are not covered by stabilization, even in older buildings.');}
+  if(o.units>=6)why.push('The building has 6 or more apartments.');else against.push('Buildings with fewer than 6 apartments are generally not stabilized.');
+  if(o.built&&o.built<1974)why.push('It was built before 1974.');else if(o.built)against.push('Built in 1974 or later, which is generally outside stabilization.');
+  let v;
+  const core=o.type==='rental'&&o.units>=6&&o.built&&o.built<1974;
+  if(o.mentioned)v='likely';
+  else if(core)v='likely';
+  else if(o.type==='rental'&&o.units>=6&&o.taxBenefit&&o.built>=1974)v='possible';
+  else v='unlikely';
+  if(o.mentioned&&!core)why.push('Your lease or renewal mentions rent stabilization. Treat that as a strong sign and confirm with a rent history.');
+  if(v==='possible')why.push('Newer buildings can be stabilized if the owner took a tax benefit such as 421-a or J-51.');
+  const title={likely:'Likely stabilized',possible:'Possibly stabilized',unlikely:'Likely not stabilized'}[v];
+  return {verdict:v,title,why,against,src:['stab311','hcrissues']};
+}
+function rentHistoryLetter(o){
+  return 'To: NYS Homes and Community Renewal, Office of Rent Administration\nEmail: rentinfo@hcr.ny.gov\n\nRe: Request for rent history\n\nI am the tenant of '+(o.addr||'[Apartment address]')+', Apt '+(o.apt||'[unit]')+', '+(o.boro||'New York')+'. I moved in on '+(o.since||'[date]')+' and pay $'+(o.rent||'[rent]')+' per month.\n\nPlease send me the complete registration and rent history for this apartment, including every registered legal regulated rent, any preferential rent and any registration of vacancy. I enclose proof of tenancy: a copy of my lease and a recent rent receipt or utility bill.\n\nThank you,\n'+(o.name||'[Your name]')+'\n'+(o.contact||'[Phone or email]');
 }
 /* ===== ENGINE END ===== */

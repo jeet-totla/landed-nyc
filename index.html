@@ -99,6 +99,14 @@ p{margin:0}a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
 .tile .src a{color:var(--field-ink)}
 .t-line{grid-column:span 7}.t-fun{grid-column:span 5}.t-stack{grid-column:span 12}.t-ren{grid-column:span 4}.t-rent{grid-column:span 4}.t-stu{grid-column:span 4}
 @media(max-width:980px){.t-line,.t-fun,.t-ren,.t-rent,.t-stu{grid-column:span 12}.field .intro{grid-template-columns:1fr}}
+.t-map{grid-column:span 12;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center}
+@media(max-width:980px){.t-map{grid-template-columns:1fr}}
+.cart .bx{fill:var(--hl)}.cart .bx.nil{fill:none;stroke:var(--field-soft);stroke-width:2;stroke-dasharray:6 6}
+.cart .bn{fill:#0E1A14;font:800 30px var(--f-display);letter-spacing:-.04em}.cart .bl{fill:#0E1A14;font-size:15px;font-weight:600}
+.cart .bn2{fill:var(--field-soft);font-size:14px}
+.chk{display:grid;gap:6px;margin:10px 0}.chk .rm{background:var(--s1);padding:14px 16px;border-radius:4px}
+.chk .rm h4{font-size:18px;margin-bottom:8px}.chk .it{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--s2,rgba(128,128,128,.25));font-size:15px}
+.chk .it select{width:auto}.chk .it input[type=text]{grid-column:1/-1}
 svg text{font-family:var(--f-body)}
 .chart{width:100%;height:auto;display:block;overflow:visible}
 .chart .ax{fill:var(--field-soft);font-size:12.5px}
@@ -338,6 +346,10 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
     <div class="tile t-stu rv" style="--d:200ms"><h3>137,799 people in New York State rent with no US credit.</h3>
       <div id="c-donut"></div>
       <p class="src"><a href="https://opendoorsdata.org/wp-content/uploads/2025/11/OpenDoors_FactSheet_New-York_-2025.pdf" target="_blank" rel="noopener">IIE Open Doors 2025</a>, international students in New York State, 2024/25. They are one group; newcomers who work are not counted.</p></div>
+    <div class="tile t-map rv"><div><h3>Brooklyn leads the broker-fee complaints.</h3>
+      <p style="font-size:18px;max-width:38ch">Since the FARE Act took effect in June 2025, 311 has logged <b>186</b> complaints about illegal broker fees. Three boroughs are itemised in the report: Brooklyn 67, Queens 46, Manhattan 41. That is 154, so <b>32</b> sit in the Bronx, Staten Island or elsewhere, and the report does not say where.</p>
+      <p class="src">Hoodline, March 18, 2026, reporting 311 data. Square area is proportional to the count. Dashed squares are not itemised. This is a schematic of the five boroughs, not a street map.</p></div>
+      <div class="cart" id="c-map"></div></div>
     <div class="tile t-stack rv"><h3>One Manhattan median apartment at signing.</h3><div id="c-stack"></div>
       <p class="src">Legal side: first month and a one-month deposit at the $5,395 median, plus a $20 background check (GOL §7-108, RPL §238-a). Illegal side: a 15% broker fee on annual rent (a rate seen in reported cases), the $4,000 listing-access fee, and $1,140 of junk fees from one reported Brooklyn listing ($500 lease fee, $575 processing, $65 digital submission). Illustrative sum, not an average. Average upfront saving when no broker fee is collected: $5,454 (StreetEasy, via <a href="https://hoodline.com/2026/03/nyc-renters-fume-as-fare-act-refunds-barely-trickled-in/" target="_blank" rel="noopener">Hoodline</a>).</p></div>
   </div>
@@ -356,6 +368,8 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
       <li><i></i><div><b>Vet the landlord and broker<u>Live</u></b><span>Turn the HPD record into a plain-English read, with the questions to ask.</span></div></li>
       <li><i></i><div><b>True move-in cost<u>Live</u></b><span>Income, guarantor or prepaid rent: what each path really costs with no US credit.</span></div></li>
       <li><i></i><div><b>Renter passport<u>Live</u></b><span>Build the paper package landlords can say yes to.</span></div></li>
+      <li><i></i><div><b>Is it rent-stabilized?<u>Live</u></b><span>Screen the building, then draft the rent-history request to HCR.</span></div></li>
+      <li><i></i><div><b>Move-in condition log<u>Live</u></b><span>Room by room, dated, ready to email to your landlord.</span></div></li>
     </ul>
     <a class="btn" href="#tool" data-open="checker">Open the checker</a>
   </article>
@@ -366,6 +380,7 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
       <li><i></i><div><b>Renewal check<u>Live</u></b><span>Good Cause cap or rent freeze, with the exact overcharge.</span></div></li>
       <li><i></i><div><b>Fee audit<u>Live</u></b><span>Scan your lease and bills for fees New York does not allow, then draft the complaint.</span></div></li>
       <li><i></i><div><b>Deposit clock<u>Live</u></b><span>Fourteen days to return it. After that, a demand letter writes itself.</span></div></li>
+      <li><i></i><div><b>Heat and hot water<u>Live</u></b><span>Enter the temperature and the hour. See what the law requires and draft the 311 complaint.</span></div></li>
       <li><i></i><div><b>Landlord record<u>Live</u></b><span>Open violations and litigation for your building, in one read.</span></div></li>
     </ul>
     <a class="btn" href="#tool" data-open="renewal">Check a renewal</a>
@@ -388,9 +403,12 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
       <button class="ri" role="tab" data-tab="vet" style="--c:var(--go)" aria-selected="false">Vet landlord and broker<small>HPD record, licence</small></button>
       <button class="ri" role="tab" data-tab="movein" style="--c:var(--go)" aria-selected="false">True move-in cost<small>Four ways to get approved</small></button>
       <button class="ri" role="tab" data-tab="passport" style="--c:var(--go)" aria-selected="false">Renter passport<small>No credit history, no problem</small></button>
+      <button class="ri" role="tab" data-tab="stab" style="--c:var(--go)" aria-selected="false">Is it rent-stabilized?<small>Screener, rent history request</small></button>
+      <button class="ri" role="tab" data-tab="log" style="--c:var(--go)" aria-selected="false">Move-in condition log<small>Dated record for your deposit</small></button>
       <h4 class="a">After you've signed</h4>
       <button class="ri" role="tab" data-tab="renewal" style="--c:var(--after)" aria-selected="false">Renewal check<small>Good Cause and rent freeze</small></button>
       <button class="ri" role="tab" data-tab="fees" style="--c:var(--after)" aria-selected="false">Fee audit<small>Find fees, draft the complaint</small></button>
+      <button class="ri" role="tab" data-tab="heat" style="--c:var(--after)" aria-selected="false">Heat and hot water<small>Is your landlord required to heat?</small></button>
       <button class="ri" role="tab" data-tab="deposit" style="--c:var(--after)" aria-selected="false">Deposit clock<small>14 days, then a letter</small></button>
     </div>
     <div>
@@ -515,6 +533,52 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
         <textarea id="f-txt" placeholder="Paste the text here."></textarea>
         <div class="row"><label class="check" style="margin:0 auto 0 0"><input type="checkbox" id="f-stab"> My apartment is rent-stabilized</label><button class="btn quiet sm" id="fdemo">Use an example</button><button class="btn after" id="frun">Audit fees</button></div>
       </div><div id="fout"></div></div>
+    </div>
+    <!-- stabilization -->
+    <div class="pane" id="p-stab" role="tabpanel" hidden>
+      <h3>Is my apartment rent-stabilized?</h3><p class="lead">Stabilized tenants get capped renewals and extra protections. Answer four questions, then request your official rent history.</p>
+      <div class="split"><div>
+        <div class="fields">
+          <div><label for="s-units">Apartments in the building</label><input id="s-units" type="number" min="1" value="12"></div>
+          <div><label for="s-built">Year built</label><input id="s-built" type="number" min="1800" max="2026" value="1962"></div>
+          <div class="full"><label for="s-type">Building type</label><select id="s-type"><option value="rental">Rental</option><option value="coop">Co-op or condo</option></select></div>
+          <div class="full">
+            <label class="check"><input type="checkbox" id="s-tax"> The building got a tax benefit such as 421-a or J-51</label>
+            <label class="check"><input type="checkbox" id="s-men"> My lease or renewal mentions rent stabilization or a DHCR rider</label>
+          </div>
+          <div><label for="s-name">Your name (for the request)</label><input id="s-name" type="text"></div>
+          <div><label for="s-addr">Building address</label><input id="s-addr" type="text" placeholder="214 E 11th St"></div>
+          <div><label for="s-apt">Apartment</label><input id="s-apt" type="text" placeholder="4C"></div>
+          <div><label for="s-since">Moved in on</label><input id="s-since" type="text" placeholder="e.g. Sept 1, 2024"></div>
+          <div><label for="s-rent">Monthly rent ($)</label><input id="s-rent" type="text" placeholder="3000"></div>
+        </div>
+        <div class="row"><button class="btn go" id="srun">Screen my apartment</button></div>
+        <p class="hint">Landed screens by building. Only your rent history is proof. The rule for buildings of 6 or more apartments built before 1974 is from 311. The tax-benefit route is from HCR guidance and is flagged as a possibility, not a verdict.</p>
+      </div><div id="sout"></div></div>
+    </div>
+    <!-- move-in log -->
+    <div class="pane" id="p-log" role="tabpanel" hidden>
+      <h3>Move-in condition log</h3><p class="lead">On day one, record what you see. A dated list with photos is your best evidence if the landlord later claims you damaged something.</p>
+      <div class="fields"><div><label for="g-date">Move-in date</label><input id="g-date" type="date"></div><div><label for="g-addr">Apartment address</label><input id="g-addr" type="text" placeholder="214 E 11th St, Apt 4C"></div></div>
+      <div class="chk" id="g-rooms"></div>
+      <div class="row"><button class="btn go" id="grun">Build my log</button><button class="btn quiet" data-open="deposit" id="g-dep">Open the deposit clock</button></div>
+      <div id="gout"></div>
+    </div>
+    <!-- heat -->
+    <div class="pane" id="p-heat" role="tabpanel" hidden>
+      <h3>Heat and hot water</h3><p class="lead">Is your landlord required to heat the apartment right now? Enter what you see.</p>
+      <div class="split"><div>
+        <div class="fields">
+          <div><label for="h-date">Date</label><input id="h-date" type="date"></div>
+          <div><label for="h-time">Time of day</label><input id="h-time" type="time" value="07:30"></div>
+          <div><label for="h-out">Outside temperature (°F)</label><input id="h-out" type="number" value="42"></div>
+          <div><label for="h-in">Inside temperature (°F)</label><input id="h-in" type="number" value="61"></div>
+          <div><label for="h-hot">Hot water at the tap (°F, optional)</label><input id="h-hot" type="number" placeholder="e.g. 105"></div>
+          <div><label for="h-addr">Address and apartment</label><input id="h-addr" type="text" placeholder="214 E 11th St, Apt 4C"></div>
+        </div>
+        <div class="row"><button class="btn after" id="hrun">Check heat</button></div>
+        <p class="hint">Source: HPD. Heat season runs October 1 to May 31. Hot water must be at least 120°F all year. Use a thermometer and write the time down.</p>
+      </div><div id="hout"></div></div>
     </div>
     <!-- deposit -->
     <div class="pane" id="p-deposit" role="tabpanel" hidden>
@@ -770,6 +834,69 @@ $('#drun').onclick=()=>{
    :today+'\n\nDear '+ll+',\n\nRe: Demand for return of security deposit, '+addr+'\n\nI vacated the apartment on '+new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'. Under New York General Obligations Law §7-108(1-a), you were required to return my security deposit of '+usd(amt)+', or provide an itemized statement, within 14 days, by '+fmt(r.deadline)+'. I have received neither.\n\nBecause that deadline has passed, you have forfeited any right to retain any part of the deposit. I demand payment of '+usd(amt)+' within 10 days of this letter. If I do not receive it, I will file a claim in New York City Civil Court (small claims) and ask for the deposit and costs.\n\nSincerely,\n'+name;
   h+='<label>'+(open?'Reminder letter':'Demand letter')+'</label><pre class="letter" id="dl"></pre><div class="srcs"><a href="'+SRC.gol.url+'" target="_blank" rel="noopener">'+SRC.gol.label+' ↗</a></div>';
   $('#dout').innerHTML=h;$('#dl').textContent=letter;copyBtn($('#dl'),$('#dl'));
+};
+
+
+/* ---------- complaint map (schematic) ---------- */
+(function(){
+  const k=22,items=[['Bronx',null,330,10],['Manhattan',41,150,40],['Queens',46,350,150],['Brooklyn',67,170,235],['Staten Island',null,10,310]];
+  let o='<svg class="chart" viewBox="0 0 520 420" role="img" aria-label="Schematic of the five boroughs. Brooklyn 67 complaints, Queens 46, Manhattan 41. Bronx and Staten Island not itemised.">';
+  items.forEach(([n,v,x,y])=>{
+    const sd=v?Math.sqrt(v)*k:100;
+    if(v)o+='<rect class="bx" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bn" x="'+(x+14)+'" y="'+(y+40)+'">'+v+'</text><text class="bl" x="'+(x+14)+'" y="'+(y+62)+'">'+n+'</text>';
+    else o+='<rect class="bx nil" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bl" style="fill:var(--field-ink)" x="'+(x+12)+'" y="'+(y+34)+'">'+n+'</text><text class="bn2" x="'+(x+12)+'" y="'+(y+54)+'">not itemised</text>';
+  });
+  $('#c-map').innerHTML=o+'</svg>';
+})();
+
+/* ---------- stabilization ---------- */
+$('#srun').onclick=()=>{
+  const r=stabilized({units:parseInt($('#s-units').value)||0,built:parseInt($('#s-built').value)||0,type:$('#s-type').value,taxBenefit:$('#s-tax').checked,mentioned:$('#s-men').checked});
+  const cls={likely:'push',possible:'minor',unlikely:'clean'}[r.verdict];
+  let h='<div class="verdict '+cls+'"><div class="vb">'+esc(r.title)+'</div><p>'+esc(r.why.concat(r.against).join(' '))+'</p></div>';
+  h+='<article class="flag info"><header><h4>Why this is only a screen</h4><span class="tagt">Note</span></header><p>Rent history is the proof. The tenant of record can request it from HCR, which has it on file for registered apartments.</p>'+srcLinks(['hcrsearch'])+'</article>';
+  h+='<div class="draft"><label>Rent history request</label><div class="row" style="margin:0"><button class="btn quiet sm" id="mkrh">Draft the request</button></div><pre id="rhout" hidden></pre></div>';
+  h+='<div class="draft"><label>Next</label><div class="row" style="margin:0"><button class="btn quiet sm" id="tor">Check my renewal as stabilized</button></div></div>'+srcLinks(r.src);
+  $('#sout').innerHTML=h;stagger('#sout .flag');
+  $('#mkrh').onclick=()=>{const pre=$('#rhout');pre.hidden=false;pre.textContent=rentHistoryLetter({name:$('#s-name').value.trim(),addr:$('#s-addr').value.trim(),apt:$('#s-apt').value.trim(),since:$('#s-since').value.trim(),rent:$('#s-rent').value.trim()});if(!$('#crh')){copyBtn(pre,pre);pre.nextSibling.id='crh';}};
+  $('#tor').onclick=()=>{$('#r-type').value=r.verdict==='unlikely'?'market':'stabilized';$('#r-type').dispatchEvent(new Event('change'));openTab('renewal',true);};
+};
+
+/* ---------- move-in log ---------- */
+const ROOMS={'Entry and hallway':['Front door and lock','Walls and paint','Floors'],'Living room':['Walls and ceiling','Floors','Windows and screens','Outlets and switches'],'Kitchen':['Stove and oven','Fridge','Sink and faucet','Cabinets','Signs of pests'],'Bathroom':['Toilet','Tub or shower','Sink and faucet','Mold or leaks'],'Bedroom':['Walls and ceiling','Floors','Windows and screens','Closet'],'Safety and utilities':['Smoke detector works','Carbon monoxide detector works','Heat works','Hot water works','Intercom or buzzer']};
+(function(){
+  const d=new Date();$('#g-date').value=d.toISOString().slice(0,10);
+  $('#g-rooms').innerHTML=Object.keys(ROOMS).map((r,i)=>'<div class="rm"><h4>'+r+'</h4>'+ROOMS[r].map((it,j)=>'<div class="it"><span>'+it+'</span><select data-r="'+i+'" data-i="'+j+'" aria-label="'+it+'"><option value="">Not checked</option><option value="OK">OK</option><option value="Issue">Issue</option></select><input type="text" placeholder="Describe the issue" data-n="'+i+'-'+j+'" hidden></div>').join('')+'</div>').join('');
+  $$('#g-rooms select').forEach(sel=>sel.onchange=()=>{sel.parentNode.querySelector('input').hidden=sel.value!=='Issue';});
+})();
+$('#grun').onclick=()=>{
+  const keys=Object.keys(ROOMS),date=$('#g-date').value,addr=$('#g-addr').value.trim()||'[Apartment address]';
+  const fmt=new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  let lines=[],issues=0,ok=0;
+  $$('#g-rooms select').forEach(sel=>{if(!sel.value)return;const r=keys[sel.dataset.r],it=ROOMS[r][sel.dataset.i],note=sel.parentNode.querySelector('input').value.trim();
+    if(sel.value==='Issue'){issues++;lines.push('- '+r+', '+it+': ISSUE'+(note?' - '+note:''));}else{ok++;lines.push('- '+r+', '+it+': OK');}});
+  const txt='MOVE-IN CONDITION LOG\nAddress: '+addr+'\nDate inspected: '+fmt+'\n\n'+(lines.join('\n')||'(nothing checked yet)')+'\n\nPhotos with timestamps are attached. Please add this list to my lease file.';
+  $('#gout').innerHTML='<div class="verdict '+(issues?'push':'clean')+'"><div class="vb">'+ok+' fine, '+issues+' to report</div><p>Email this to your landlord the same day and keep the sent message. Photograph every issue with the date on your phone.</p></div><pre class="letter" id="gl"></pre><div class="srcs"><a href="'+SRC.gol.url+'" target="_blank" rel="noopener">'+SRC.gol.label+' ↗</a></div>';
+  $('#gl').textContent=txt;copyBtn($('#gl'),$('#gl'));
+};
+
+/* ---------- heat ---------- */
+(function(){const d=new Date();$('#h-date').value=d.toISOString().slice(0,10);})();
+$('#hrun').onclick=()=>{
+  const date=$('#h-date').value,tm=$('#h-time').value||'12:00';if(!date){$('#hout').innerHTML='<div class="empty"><b>Pick a date</b></div>';return;}
+  const hr=parseInt(tm.split(':')[0]),outv=parseFloat($('#h-out').value),inv=parseFloat($('#h-in').value),hotv=parseFloat($('#h-hot').value);
+  const r=heat({date,hour:hr,outside:isNaN(outv)?99:outv,indoor:inv,hotTemp:hotv});
+  const bad=r.violation||r.hotViolation;
+  let h='<div class="verdict '+(bad?'stop':(r.required?'clean':'minor'))+'"><div class="vb">'+(r.violation?'Your landlord is not providing required heat':(r.required?(isNaN(inv)?'Heat is required':'Heat meets the minimum'):'Heat is not required right now'))+'</div><p>'+esc(r.reason)+(r.required&&!isNaN(inv)?' You measured '+inv+'°F.':'')+'</p></div>';
+  if(r.hotViolation)h+='<article class="flag high"><header><h4>Hot water is below 120°F</h4><span class="tagt">Stop</span></header><p>Hot water must be at least 120°F 365 days a year. You measured '+hotv+'°F.</p>'+srcLinks(['heat'])+'</article>';
+  h+='<article class="flag info"><header><h4>Penalties and next step</h4><span class="tagt">Note</span></header><p>Tell your landlord first. If nothing changes, call 311 or file online. You can file anonymously, in which case an inspector picks an apartment at random. Owners face $250 to $500 a day for a first heat or hot water violation.</p>'+srcLinks(['heat'])+'</article>';
+  if(bad){
+    const when=new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    const t='311 complaint: no heat'+(r.hotViolation?' and hot water':'')+'\n\nAddress: '+($('#h-addr').value.trim()||'[Address and apartment]')+'\nDate and time: '+when+', '+tm+'\n'+(r.violation?'Indoor temperature: '+inv+'°F. Outside temperature: '+outv+'°F. Required minimum: '+r.min+'°F.\n':'')+(r.hotViolation?'Hot water at the tap: '+hotv+'°F. Required minimum: 120°F.\n':'')+'I told my landlord about this on [date] and it was not fixed. Please send an inspector.';
+    h+='<label>Complaint text</label><pre class="letter" id="hl"></pre>';
+    $('#hout').innerHTML=h;$('#hl').textContent=t;copyBtn($('#hl'),$('#hl'));
+  }else $('#hout').innerHTML=h;
+  stagger('#hout .flag');
 };
 
 /* ---------- problem charts ---------- */
