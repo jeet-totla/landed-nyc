@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Landed one-pager</title>
+<style>
+@page{size:Letter;margin:0}
+:root{--ink:#0E1A14;--bg:#F4F5F2;--go:#00793A;--hl:#FFE04A;--mut:#4B5A52;--line:#D5DAD4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:8.5in;height:11in;background:var(--bg);color:var(--ink);font:400 8.3pt/1.36 Inter,sans-serif;padding:0 .5in;display:flex;flex-direction:column;overflow:hidden}
+h1,h2{font-family:'Inter Display',Inter,sans-serif}
+.top{margin:0 -.5in;background:var(--go);color:#fff;padding:.26in .5in .22in;display:flex;justify-content:space-between;gap:.3in;align-items:flex-end}
+.top h1{font-size:34pt;font-weight:800;letter-spacing:-.045em;line-height:.95}
+.top p{font-size:11pt;line-height:1.25;margin-top:7px;max-width:4.6in;font-weight:500}
+.top .l{white-space:nowrap;text-align:right;font-size:8.4pt;line-height:1.5}
+.top .l b{display:inline-block;background:var(--hl);color:var(--ink);padding:1px 7px;border-radius:2px;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:.16in .3in;margin-top:.17in}
+h2{font-size:12.5pt;font-weight:800;letter-spacing:-.03em;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:14px;height:5px;background:var(--hl);display:block}
+p+p{margin-top:5px}
+.nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:7px 0}
+.nums div{border-top:3px solid var(--ink);padding-top:4px;font-size:7.4pt;line-height:1.3;color:var(--mut)}
+.nums b{display:block;font:800 17pt/1 'Inter Display',Inter;letter-spacing:-.04em;color:var(--ink);margin-bottom:2px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;margin-top:6px;font-size:8pt}
+.tools h3{font-size:7.4pt;text-transform:uppercase;letter-spacing:.08em;color:var(--go);margin-bottom:2px}
+.tools ul{list-style:none}.tools li{padding:2px 0;border-top:1px solid var(--line)}
+ol{padding-left:14px}ol li{margin-bottom:3.2px}
+table{width:100%;border-collapse:collapse;font-size:7.9pt}
+td{padding:3.4px 6px 3.4px 0;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{font-weight:700;width:30%}
+.me{background:#fff;border-left:4px solid var(--go);padding:6px 9px;margin-top:6px;font-size:8pt}
+.me b{color:var(--go)}
+.shots{display:grid;grid-template-columns:1.25fr 1fr 1.35fr .8fr;gap:7px;margin-top:6px;align-items:end}
+.shots figure{margin:0}.shots img{width:100%;height:1.18in;object-fit:cover;object-position:top;display:block;border:1px solid var(--line)}
+.shots figcaption{font-size:6.8pt;color:var(--mut);margin-top:2px;line-height:1.25}
+.foot{margin-top:auto;padding:7px 0 .3in;border-top:1px solid var(--line);font-size:6.9pt;color:var(--mut);line-height:1.35}
+.wide{grid-column:1/-1}
+a{color:inherit}
+</style></head><body>
+<div class="top"><div><h1>Landed</h1><p>Protects NYC renters from the first message to the last month. Rules decide. AI only explains and drafts.</p></div>
+<div class="l"><b>jeet-totla.github.io/landed-nyc</b><br>github.com/jeet-totla/landed-nyc (open source)<br>Jeet Totla · TETR College of Business<br>NYC Founders Challenge</div></div>
+
+<div class="grid">
+<section><h2>The problem</h2>
+<p>In June 2025 the FARE Act made landlords pay their own brokers. A year later renters still pay fees nobody can explain, and the people who enforce the law are badly outnumbered. A renter with a lease in hand cannot tell a legal fee from an illegal one.</p>
+<div class="nums"><div><b>$4,000</b>charged to see a hidden listing (Bloomberg Law, Aug 2026)</div><div><b>74</b>summonses against 2,000+ complaints, about $27K in penalties (The Real Deal, Jun 2026)</div><div><b>$5,395</b>Manhattan median rent, 1.54% vacancy (6sqft, Sep 2026)</div></div>
+<p>Newcomers have it worst: 137,799 international students in New York State rent with no US credit history (IIE Open Doors 2025). Every number on the site links to its source.</p></section>
+
+<section><h2>The solution</h2>
+<p>Landed reads a lease, listing or renewal offer, checks it against New York law, and cites the rule behind every flag. It covers two moments, with ten tools:</p>
+<div class="tools"><div><h3>Before you sign</h3><ul><li>Lease and listing checker</li><li>Landlord and broker vetting (live HPD and DOS data)</li><li>True move-in cost with no credit</li><li>Renter passport</li><li>Is it rent-stabilized?</li><li>Move-in condition log</li></ul></div>
+<div><h3>After you've signed</h3><ul><li>Renewal check (Good Cause, rent freeze)</li><li>Fee audit and complaint draft</li><li>Heat and hot water, 311 draft</li><li>Deposit clock and demand letter</li></ul></div></div>
+<p>It answers with numbers: the sample lease on the home page carries $9,650 in overcharges. Replies can be rewritten in the renter's own language.</p></section>
+
+<section><h2>How I built it, in one day</h2>
+<ol><li><b>Picked the problem from reporting,</b> not guesses: press and 311 data on the FARE Act year.</li>
+<li><b>Verified the law first.</b> Statutes, DCWP, HPD and HCR pages are in a dated rule table (docs/RULES.md). Anything I could not re-read is marked "not re-read", and heuristics are labelled as not law.</li>
+<li><b>Rules engine in plain JavaScript,</b> with tests (npm test). Fixed rules make every flag auditable.</li>
+<li><b>Live data:</b> HPD violations, complaints and litigation, and state broker licences, with dataset fields checked against real records.</li>
+<li><b>Design and QA:</b> reviewed against Taste and Awwwards rules, tested on desktop and a phone-size screen, with no horizontal scroll.</li>
+<li><b>Shipped open source</b> on GitHub with a sourced README.</li></ol></section>
+
+<section><h2>AI toolkit and what I contributed</h2>
+<table><tr><td>Claude (Sonnet 5.5)</td><td>Research, rules engine, site code, tests and copy, working from my direction.</td></tr>
+<tr><td>Claude inside the product</td><td>Rewrites replies in other languages and reads photos of leases. It never decides what is illegal.</td></tr>
+<tr><td>Taste and Awwwards skills</td><td>Design review rules applied to the page.</td></tr>
+<tr><td>Playwright</td><td>Automated browser tests and screenshots.</td></tr>
+<tr><td>NYC Open Data, data.ny.gov</td><td>Live landlord and broker records.</td></tr></table>
+<div class="me"><b>My part:</b> I set the direction and made the product calls: the two-moment structure, the rule "rules decide, AI explains", and open source on GitHub. I required every statistic and statute to be checked against its source, questioned and removed an unsupported licence claim, asked for the live HPD and licence lookups, directed the design and mobile polish, and chose the added tools: complaint map, heat helper, stabilization screener and move-in log.</div></section>
+
+<section class="wide"><h2>Try it, or see it</h2>
+<p><b>Live:</b> jeet-totla.github.io/landed-nyc. If the link fails, these are screenshots of the build.</p>
+<div class="shots"><figure><img src="s1.jpg"><figcaption>Home: a lease rider with fees highlighted and the overcharge totalled</figcaption></figure>
+<figure><img src="s2.jpg"><figcaption>Checker flags a $4,000 listing fee, broker fee and 2-month deposit</figcaption></figure>
+<figure><img src="s3.jpg" style="object-fit:contain;background:#0F5430"><figcaption>311 broker-fee complaints by borough</figcaption></figure>
+<figure><img src="s4.jpg"><figcaption>Heat helper and 311 draft</figcaption></figure></div></section>
+</div>
+<div class="foot">Landed is information, not legal advice. It judges only the text you give it. Live landlord and broker lookups need the GitHub Pages site, not an embedded view. Heuristics such as 40x rent income and guarantor multiples are labelled as not law. Complaint counts are from press reports of 311 data. Law sources: GOL §7-108, RPL §§226-c, 234, 235-b, 238-a, Art. 6-A; NYC DCWP FARE Act FAQ; HPD; HCR.</div>
+</body></html>
