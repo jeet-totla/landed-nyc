@@ -440,7 +440,7 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
           <div class="fields">
             <div><label for="l-boro">Borough</label><select id="l-boro"><option>Manhattan</option><option>Brooklyn</option><option>Queens</option><option>Bronx</option><option>Staten Island</option></select></div>
             <div><label for="l-house">House number</label><input id="l-house" type="text" placeholder="100"></div>
-            <div class="full"><label for="l-street">Street, as HPD spells it</label><input id="l-street" type="text" placeholder="EAST 11 STREET"></div>
+            <div class="full"><label for="l-street">Street</label><input id="l-street" type="text" placeholder="E 11th St"></div>
           </div>
           <div class="row"><button class="btn go sm" id="lbld">Look up this building</button></div>
           <div class="fields" style="margin-top:18px"><div class="full"><label for="l-broker">Broker name, brokerage or licence number</label><input id="l-broker" type="text" placeholder="Brokerage name or 37AB1234567"></div></div>
@@ -745,7 +745,7 @@ $('#lbld').onclick=async()=>{
   const st=$('#lstat'),res=$('#lres');st.textContent='Looking up HPD records…';res.innerHTML='';
   try{
     const r=await lookupBuilding({boro:$('#l-boro').value,house:$('#l-house').value,street:$('#l-street').value});
-    if(!r.found){st.textContent='No HPD record matched. HPD matches the address literally: use the street exactly as HPD spells it, for example EAST 11 STREET or WEST 4 STREET.';return;}
+    if(!r.found){st.textContent='No HPD record matched. Check the borough and house number. Buildings with fewer than 3 units, new buildings and some addresses with a range (214-16) may not appear.';return;}
     $('#v-c').value=r.c;$('#v-b').value=r.b;$('#v-a').value=r.a;$('#v-comp').value=r.comp;$('#v-lit').value=r.lit;if(r.portfolio)$('#v-portfolio').value=r.portfolio;
     st.textContent='Public data from NYC Open Data, fetched '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'.';
     res.innerHTML='<div class="fact" style="margin-top:10px"><small>Registered owner</small><strong style="font-size:20px">'+esc(r.owner||'Not found')+'</strong>'+(r.portfolio?'<small style="margin-top:6px">'+r.portfolio+' buildings registered under this name</small>':'')+'</div>';

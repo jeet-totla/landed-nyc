@@ -9,14 +9,16 @@ globalThis.fetch=async(u)=>{calls.push(u);const url=new URL(u);const id=url.path
   if(id==='feu5-w2e2.json')return j(url.searchParams.get('$select').startsWith('count')?[{n:'14'}]:[{type:'CorporateOwner',corporationname:"O'NEIL HOLDINGS LLC"}]);
   if(id==='2uuv-4c3e.json')return j([{license_holder_name:'WATTS GWENDOLYN',business_name:'100 WATTS REALTY',license_type:'TRADENAME BROKER',license_number:'37WA1050128',license_expiration_date:'2099-02-23T00:00:00.000'}]);
   return {ok:false,status:404};};
-eval(fs.readFileSync(__dirname+'/../lookup.js','utf8')+';globalThis.LB=lookupBuilding;globalThis.LK=lookupBroker;');
+eval(fs.readFileSync(__dirname+'/../lookup.js','utf8')+';globalThis.LB=lookupBuilding;globalThis.LK=lookupBroker;globalThis.NS=normStreet;');
 (async()=>{
   const r=await LB({boro:'Manhattan',house:'100',street:"east 11 street"});
   const assert=require('assert');
   assert.deepStrictEqual([r.a,r.b,r.c,r.comp,r.lit,r.portfolio,r.owner],[4,6,2,11,1,14,"O'NEIL HOLDINGS LLC"]);
-  assert(calls.some(c=>c.includes("upper%28streetname%29+like+%27EAST+11+STREET%25%27")||decodeURIComponent(c.replace(/\+/g,' ')).includes("upper(streetname) like 'EAST 11 STREET%'")));
+  assert(calls.some(c=>c.includes("upper%28streetname%29+like+%27EAST+11+STREET%25%27")||decodeURIComponent(c.replace(/\+/g,' ')).includes("upper(streetname)='EAST 11 STREET'")));
   assert(calls.some(c=>decodeURIComponent(c.replace(/\+/g,' ')).includes("owner")||true));
   assert(calls.some(c=>decodeURIComponent(c.replace(/\+/g,' ')).includes("corporationname='O''NEIL HOLDINGS LLC'")),'quotes escaped');
+  const eq=[["E 11th St","EAST 11 STREET"],["w 4th street","WEST 4 STREET"],["Atlantic Ave.","ATLANTIC AVENUE"],["2nd Avenue","2 AVENUE"],["St Marks Ave","ST MARKS AVENUE"],["Eastern Pkwy","EASTERN PARKWAY"],["Broadway","BROADWAY"]];
+  eq.forEach(([i,o])=>assert.strictEqual(NS(i),o,i));
   const b=await LK('37WA1050128'); assert.strictEqual(b[0].active,true);
   assert(decodeURIComponent(calls[calls.length-1]).includes("license_number='37WA1050128'"));
   await LK('watts realty'); assert(decodeURIComponent(calls[calls.length-1].replace(/\+/g,' ')).includes("like '%WATTS REALTY%'"));

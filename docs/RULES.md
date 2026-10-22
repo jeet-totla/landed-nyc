@@ -15,8 +15,8 @@ Landed gives information, not legal advice. Laws change, so re-verify before you
 | 2026 NYC CPI figure | 3.38%, so the cap is 8.38% | DHCR 2026 annual notice (reported by WBNY) | 2026-10-22, confirm on hcr.ny.gov |
 | Increase notice | 30, 60 or 90 days' written notice for increases of 5% or more, by length of occupancy | RPL §226-c | 2026-10-22 |
 | Rent freeze | 0% for 1- and 2-year leases starting 2026-10-01 to 2027-09-30, rent-stabilized only | NYC Rent Guidelines Board vote of 2026-06-25 (reported by Documented NY) | 2026-10-22, confirm RGB order text |
-| Habitability waiver | A tenant cannot waive the warranty of habitability | RPL §235-b | not re-read |
-| Reciprocal legal fees | A clause making the tenant pay the landlord's legal fees runs both ways | RPL §234 | not re-read |
+| Habitability waiver | A tenant cannot waive the warranty of habitability | RPL §235-b, subd. 2: waiver is void as contrary to public policy | 2026-10-22 |
+| Reciprocal legal fees | A clause making the tenant pay the landlord's legal fees runs both ways | RPL §234(1): a lease clause for landlord's fees implies a reciprocal covenant to pay the tenant's reasonable fees in certain cases | 2026-10-22 |
 | Entry with notice | Reasonable notice before entry except in emergencies | NYC Admin. Code §27-2008 (cited via NY AG guidance) | not re-read |
 | Heat season | October 1 to May 31 | HPD heat and hot water page | 2026-10-22 |
 | Heat minimums | 6am to 10pm: 68°F inside when outside is below 55°F. 10pm to 6am: 62°F inside regardless of outside | HPD | 2026-10-22 |
@@ -45,3 +45,7 @@ These are labelled as such in the interface.
 2. Add the source to the `SRC` table.
 3. Add a case to `tests/engine.test.js`.
 4. Add a row to the table above with the date you read the source.
+
+## Live data checks
+
+Field names for the HPD violations, complaints, litigation, registrations and contacts datasets and the DOS broker dataset were checked against live records on 2026-10-22. Street names are normalised to HPD's spelling (E 11th St becomes EAST 11 STREET) before the query.

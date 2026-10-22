@@ -11,13 +11,25 @@ async function soql(base,id,params){
   if(!r.ok) throw new Error('HTTP '+r.status);
   return r.json();
 }
+/* Turn what people type ("E 11th St", "Atlantic Ave") into HPD's spelling ("EAST 11 STREET", "ATLANTIC AVENUE"). */
+const SUFFIX={ST:'STREET',STR:'STREET',AVE:'AVENUE',AV:'AVENUE',RD:'ROAD',PL:'PLACE',BLVD:'BOULEVARD',DR:'DRIVE',LN:'LANE',CT:'COURT',PKWY:'PARKWAY',HWY:'HIGHWAY',TER:'TERRACE',SQ:'SQUARE',PLZ:'PLAZA'};
+const FULLSUF=['STREET','AVENUE','ROAD','PLACE','BOULEVARD','DRIVE','LANE','COURT','PARKWAY','HIGHWAY','TERRACE','SQUARE','PLAZA','BROADWAY','WAY','ALLEY','WALK','LOOP','PATH'];
+const DIR={E:'EAST',W:'WEST',N:'NORTH',S:'SOUTH'};
+function normStreet(x){
+  let w=String(x).toUpperCase().replace(/[.,#]/g,' ').replace(/\b(\d+)(ST|ND|RD|TH)\b/g,'$1').replace(/\s+/g,' ').trim().split(' ');
+  if(w.length>1&&DIR[w[0]]&&/^\d/.test(w[1]))w[0]=DIR[w[0]];
+  const last=w.length-1;
+  if(w.length>1&&SUFFIX[w[last]])w[last]=SUFFIX[w[last]];
+  return w.join(' ');
+}
+const hasSuffix=n=>FULLSUF.includes(n.split(' ').pop());
 /* HPD matches addresses literally: house number as HPD stores it, street name as HPD spells it (EAST 11 STREET). */
 async function lookupBuilding(o){
   const b=BOROS[o.boro]; if(!b) throw new Error('Pick a borough');
-  const house=sq(o.house), street=sq(o.street);
+  const house=sq(o.house), street=sq(normStreet(o.street));
   if(!house||!street) throw new Error('Enter a house number and street');
-  const bld="boroid='"+b.id+"' AND housenumber='"+house+"' AND upper(streetname) like '"+street+"%'";
-  const cmp="borough='"+b.name+"' AND house_number='"+house+"' AND upper(street_name) like '"+street+"%'";
+  const bld="boroid='"+b.id+"' AND housenumber='"+house+"' AND upper(streetname)"+(hasSuffix(street)?"='"+street+"'":" like '"+street+" %'")+"";
+  const cmp="borough='"+b.name+"' AND house_number='"+house+"' AND upper(street_name)"+(hasSuffix(street)?"='"+street+"'":" like '"+street+" %'")+"";
   const since=new Date(Date.now()-365*86400000).toISOString().slice(0,10)+'T00:00:00';
   const [viol,comp,lit,reg]=await Promise.all([
     soql(NYC_DATA,DS.violations,{$select:'class,count(*) as n',$where:bld+" AND violationstatus='Open'",$group:'class'}),
