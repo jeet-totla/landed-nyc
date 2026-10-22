@@ -72,6 +72,18 @@ Listing sites show apartments and legal clinics help after a dispute. As far as 
 
 Every rule lives in [`engine.js`](engine.js) with its citation beside it, and [`docs/RULES.md`](docs/RULES.md) lists each rule, its source and the date it was last read. AI is used for reading photos and for rewriting your reply in another language.
 
+## Process, AI toolkit and my part
+
+**Process.** I spotted the problem in reporting and the law. I checked every rule and number against statutes and agency pages, dated in [`docs/RULES.md`](docs/RULES.md). I built a tested rules engine with live HPD and licence lookups, then tested it on desktop and a phone-size screen.
+
+| Tool | How it was used |
+| --- | --- |
+| Claude (Sonnet 5.5) | Research, rules engine, site code, tests and copy |
+| Claude inside the product | Rewrites replies in other languages and reads lease photos. It never decides what is illegal |
+| Playwright, Taste and Awwwards skills | Browser tests, screenshots and design review rules |
+
+**Claude wrote most of the code.** I set the direction and made the calls: the two-moment structure, "rules decide, AI explains", and open source. I required every statistic and statute to be checked against its source, removed an unsupported licence claim, asked for the live lookups, directed the design, and chose the extra tools: the complaint map, heat helper, stabilization screener and move-in log.
+
 ## Run it locally
 
 Landed is a static site with no build step.
@@ -107,7 +119,7 @@ The vet tool calls these public datasets straight from your browser:
 - HPD violations, complaints, litigation, registrations and owner contacts on [NYC Open Data](https://data.cityofnewyork.us)
 - Real estate brokers on [data.ny.gov](https://data.ny.gov)
 
-HPD matches addresses literally, so type the street as HPD spells it, for example `EAST 11 STREET`. The state dataset lists brokers and brokerages, not individual salespeople, so search the brokerage or check an agent's licence number on the [state lookup](https://appext20.dos.ny.gov/lcns_public/lic_name_search_frm). Units per building are not in these datasets, so you enter them. Some embedded views block outside requests; Landed then falls back to manual entry.
+Type the street the usual way, for example `E 11th St`; Landed converts it to HPD's spelling (`EAST 11 STREET`). The state dataset lists brokers and brokerages, not individual salespeople, so search the brokerage or check an agent's licence number on the [state lookup](https://appext20.dos.ny.gov/lcns_public/lic_name_search_frm). Units per building are not in these datasets, so you enter them. Some embedded views block outside requests; Landed then falls back to manual entry.
 
 ## Limits
 
@@ -115,3 +127,13 @@ HPD matches addresses literally, so type the street as HPD spells it, for exampl
 - A few rules are marked "not re-read" in `docs/RULES.md` and should be confirmed before launch.
 - Thresholds such as 40 times rent for income, or a guarantor fee near one month's rent, are common industry practice, not law, and are labelled that way in the interface.
 - Photo reading needs Claude. Without it, paste the text.
+
+## Sources
+
+**Law and agencies:** NY General Obligations Law §7-108; Real Property Law §§214, 216, 226-c, 234, 235-b, 238-a; NYC DCWP FARE Act FAQ; NYC HPD heat and hot water page and Good Cause notice; NY HCR (tenant rent regulation issues, rent regulated building search, DHCR 2026 CPI notice); NYC 311 rent-stabilized apartments article; NY Attorney General tenants' rights; FTC rental listing scams; NYS Department of State licence lookup.
+
+**Data:** NYC Open Data (HPD violations, complaints, litigation, registrations and contacts); data.ny.gov broker licences; IIE Open Doors 2025 (New York); StreetEasy via Hoodline.
+
+**Press:** Bloomberg Law (Aug 2026); The Real Deal (Jun and Mar 2026); Hoodline (Mar 2026); Brooklyn Downtown Star (Jul 2025); 6sqft and Corcoran (Sep and Oct 2026); Openigloo (Apr 2026); WBNY (CPI figure); Documented NY and the NYC Rent Guidelines Board (2026 rent freeze).
+
+**Tools:** Claude, Playwright, anime.js, pdf.js, Taste and Awwwards design skills, Bricolage Grotesque and Instrument Sans fonts.
