@@ -1,58 +1,96 @@
 <p align="center"><img src="assets/logo.svg" width="96" alt="Landed logo"></p>
 
-# Landed
+<h1 align="center">Landed</h1>
 
-Protection for New York City renters, from the first message to the last month.
+<p align="center"><b>Protection for New York City renters, from the first message to the last month.</b></p>
 
-Paste or upload a lease, rider, listing, renewal offer or an agent's message. Landed checks every fee and clause against New York law, shows the rule behind each flag, and drafts the reply or complaint. Rules decide; AI only reads messy text and writes your reply.
+<p align="center">
+  <a href="https://jeet-totla.github.io/landed-nyc/"><b>Open the live site → jeet-totla.github.io/landed-nyc</b></a>
+</p>
 
-Built in one day for the NYC Founders Challenge.
+<p align="center"><img src="docs/screens/hero.jpg" alt="Landed home page: a lease rider with fees highlighted and the overcharge totalled" width="860"></p>
 
+Paste or upload a lease, rider, listing, renewal offer or an agent's message. Landed checks every fee and clause against New York law, shows the rule behind each flag, totals what you are being overcharged, and drafts the reply or complaint for you.
 
-## Tools
+Rules decide. AI only reads messy text and writes your message.
 
-**Before you sign**
-- Lease and listing checker: fees, deposits, clauses and scam patterns, with citations. Accepts pasted text, text files, PDFs with selectable text, and photos (read by Claude).
-- Vet landlord and broker: looks the building up live in HPD (violations, complaints, litigation, registered owner) and the broker in the state licence database, then reads the result in plain English.
-- True move-in cost: compares income, personal guarantor, guarantor company and prepaid rent.
-- Renter passport: builds a document package and cover note for people with no US credit history.
+Built in one day for the NYC Founders Challenge by [Jeet Totla](https://github.com/jeet-totla), with Claude.
 
-**After you've signed**
-- Renewal check: Good Cause cap for market-rate apartments, rent freeze for stabilized ones.
-- Fee audit: finds fees NYC does not allow and drafts a DCWP, Attorney General or DHCR complaint.
-- Deposit clock: 14-day countdown and a reminder or demand letter.
+## The problem
 
-## Run it
+New York made landlords pay for their own brokers in June 2025. A year later renters still meet fees nobody can explain, and enforcement is thin.
 
-It is a static site. Open `index.html` in a browser, or serve the folder with any static host.
+- **$4,000** charged to see "hidden" listings after the ban ([Bloomberg Law](https://news.bgov.com/new-york-brief/nyc-brokers-are-charging-renters-4-000-to-view-hidden-listings), Aug 2026)
+- **2,000+** FARE Act complaints in year one, **74** summonses, about **$27K** in penalties and **$15K** refunded ([The Real Deal](https://therealdeal.com/new-york/2026/06/10/fare-act-sparks-thousands-of-complaints-refunds-in-year-1/), Jun 2026)
+- **$5,395** median Manhattan rent, vacancy **1.54%**, active listings down 16% in a year ([6sqft, reporting Corcoran](https://www.6sqft.com/manhattan-median-rent-hits-record-5395-month-in-september/), Sep 2026)
+- **137,799** international students in New York State, all renting with no US credit history ([IIE Open Doors 2025](https://opendoorsdata.org/wp-content/uploads/2025/11/OpenDoors_FactSheet_New-York_-2025.pdf))
+- Renewals rising over 10% fell from **26%** to **9%** after Good Cause took effect ([Openigloo](https://www.openigloo.com/blogs/good-cause-eviction-analysis))
+
+<p align="center"><img src="docs/screens/problem.jpg" alt="Charts: complaints versus summonses, renewal increases, Manhattan rent, student origins, and the cost stack at signing" width="860"></p>
+
+## What it does
+
+| | Tool | What you get |
+| --- | --- | --- |
+| **Before you sign** | Lease and listing checker | Fees, deposits, clauses and scam patterns, each with a citation, a marked-up copy of your text and a reply you can send. Reads pasted text, text files, PDFs with selectable text, and photos. |
+| | Vet landlord and broker | Live HPD record (open violations by class, complaints, litigation, registered owner and portfolio) and a broker licence check, read in plain English with questions to ask. |
+| | True move-in cost | Compares income, personal guarantor, guarantor company and prepaid rent: cash at signing and money you never get back. |
+| | Renter passport | A document checklist and cover note for people with no US credit history. |
+| **After you've signed** | Renewal check | Good Cause cap for market-rate apartments, rent freeze for stabilized ones, with the exact yearly overcharge. |
+| | Fee audit | Finds fees New York does not allow in a lease or bill and drafts a DCWP, Attorney General or DHCR complaint. |
+| | Deposit clock | 14-day countdown, then a reminder or demand letter. |
+
+<p align="center"><img src="docs/screens/checker.jpg" alt="The lease and listing checker flagging a hidden-listing fee, a broker fee, an application fee and a two-month deposit" width="860"></p>
+
+## How it works
+
+1. **Paste or upload** the text.
+2. **Extract**: the text is split into clauses and amounts, months and parties are pulled out.
+3. **Check**: fixed rules compare each term with the statute. No model decides what is legal.
+4. **Act**: you get a cited report, the dollars at risk, and a reply or complaint ready to send.
+
+Every rule lives in [`engine.js`](engine.js) with its citation beside it, and [`docs/RULES.md`](docs/RULES.md) lists each rule, its source and the date it was last read. AI is used for reading photos and for rewriting your reply in another language.
+
+## Run it locally
+
+Landed is a static site with no build step.
 
 ```
+git clone https://github.com/jeet-totla/landed-nyc
+cd landed-nyc
 python3 -m http.server 8000
 ```
 
-`python3 build.py` inlines `engine.js` into `dist/landed.html`, a single file that works on hosts that only accept one page.
-
-## Test
+Open http://localhost:8000. Opening `index.html` directly also works.
 
 ```
-npm test
+npm test          # rules engine and lookup tests
+python3 build.py  # inline everything into dist/landed.html (single file)
 ```
 
-## Layout
+## Project layout
 
-| File | What it is |
+| Path | What it is |
 | --- | --- |
-| `engine.js` | The rules engine. Pure functions, no DOM. Every rule has its citation beside it. |
-| `lookup.js` | Live HPD and licence lookups against NYC Open Data and data.ny.gov. |
-| `index.html` | The site: design tokens, sections, tool UI. |
-| `docs/RULES.md` | Each rule, its source and the date it was last verified. |
-| `tests/engine.test.js` | Engine checks against the sample cases. |
-| `assets/logo.svg` | The Landed mark. |
+| `index.html` | The site: design tokens, sections and tool interfaces |
+| `engine.js` | Rules engine. Pure functions, no DOM |
+| `lookup.js` | Live lookups against NYC Open Data and data.ny.gov |
+| `docs/RULES.md` | Rules, sources, verification dates, and which numbers are heuristics rather than law |
+| `tests/` | Engine and lookup tests |
+| `assets/` | Logo |
+
+## Live lookups
+
+The vet tool calls these public datasets straight from your browser:
+
+- HPD violations, complaints, litigation, registrations and owner contacts on [NYC Open Data](https://data.cityofnewyork.us)
+- Real estate brokers on [data.ny.gov](https://data.ny.gov)
+
+HPD matches addresses literally, so type the street as HPD spells it, for example `EAST 11 STREET`. The state dataset lists brokers and brokerages, not individual salespeople, so search the brokerage or check an agent's licence number on the [state lookup](https://appext20.dos.ny.gov/lcns_public/lic_name_search_frm). Units per building are not in these datasets, so you enter them. Some embedded views block outside requests; Landed then falls back to manual entry.
 
 ## Limits
 
-- Information, not legal advice. Check `docs/RULES.md` and the linked statutes before relying on a result.
-- Live lookups call NYC Open Data and data.ny.gov straight from the browser. They work when Landed is opened from a normal page (locally or on GitHub Pages) and are blocked inside some embedded views, where you can still enter counts by hand. HPD matches addresses literally, so use the street as HPD spells it. The state dataset lists brokers and brokerages, not individual salespeople.
-- Units per building are not in these datasets and are entered by hand.
-- Photo reading needs Claude; without it, paste the text.
-
+- Landed gives information, not legal advice. Laws change, so check [`docs/RULES.md`](docs/RULES.md) and the linked statutes before you rely on a result.
+- A few rules are marked "not re-read" in `docs/RULES.md` and should be confirmed before launch.
+- Thresholds such as 40 times rent for income, or a guarantor fee near one month's rent, are common industry practice, not law, and are labelled that way in the interface.
+- Photo reading needs Claude. Without it, paste the text.
