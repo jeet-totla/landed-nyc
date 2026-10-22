@@ -51,6 +51,16 @@ Broker-fee complaints to 311 since the FARE Act took effect: **186**, with Brook
 
 <p align="center"><img src="docs/screens/heat.jpg" alt="Heat and hot water helper showing a 68 degree minimum and a drafted 311 complaint" width="860"></p>
 
+## Who it is for and how it could pay
+
+Newcomers get hit hardest: students and workers arriving from abroad have no US credit history, no local guarantor and no way to tell a legal fee from an illegal one. Renters use Landed free. These revenue ideas are hypotheses to test, not live revenue:
+
+- Universities and relocation programs license it for arriving international students.
+- Landlords and brokers use a check that shows their listing follows the FARE Act.
+- A paid renter pack for filings and documents, if free use proves demand.
+
+Listing sites show apartments and legal clinics help after a dispute. As far as we can tell, nothing checks your paperwork against the law before you pay, with a source on every flag, for renters who have no US credit.
+
 ## How it works
 
 1. **Paste or upload** the text.
