@@ -1,3 +1,4 @@
+<!--WRAP--><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><!--/WRAP-->
 <title>Landed</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Landed checks NYC leases, listings, landlords and renewals against the law and cites the rule behind every flag.">
@@ -100,7 +101,8 @@ p{margin:0}a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
 .t-line{grid-column:span 7}.t-fun{grid-column:span 5}.t-stack{grid-column:span 12}.t-ren{grid-column:span 4}.t-rent{grid-column:span 4}.t-stu{grid-column:span 4}
 @media(max-width:980px){.t-line,.t-fun,.t-ren,.t-rent,.t-stu{grid-column:span 12}.field .intro{grid-template-columns:1fr}}
 .t-map{grid-column:span 12;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center}
-@media(max-width:980px){.t-map{grid-template-columns:1fr}}
+@media(max-width:980px){.t-map{grid-template-columns:minmax(0,1fr)}}
+.t-map>*{min-width:0}.cart svg{max-width:100%;height:auto}
 .cart .bx{fill:var(--hl)}.cart .bx.nil{fill:none;stroke:var(--field-soft);stroke-width:2;stroke-dasharray:6 6}
 .cart .bn{fill:#0E1A14;font:800 30px var(--f-display);letter-spacing:-.04em}.cart .bl{fill:#0E1A14;font-size:15px;font-weight:600}
 .cart .bn2{fill:var(--field-soft);font-size:14px}
@@ -130,7 +132,7 @@ svg text{font-family:var(--f-body)}
 .stk .bar{display:flex;height:60px;background:var(--field);border-radius:2px;overflow:hidden}
 .stk .seg{flex:0 0 var(--w);display:flex;align-items:center;padding:0 10px;background:var(--c);color:#0E1A14;font-size:14px;font-weight:600;line-height:1.1;overflow:hidden;white-space:nowrap}
 .stk .tot{font:800 28px/1 var(--f-display);letter-spacing:-.03em;margin-top:6px}
-@media(max-width:700px){.stk .row{grid-template-columns:1fr}.stk .seg{font-size:11.5px;padding:0 5px}}
+@media(max-width:700px){.stk .row{grid-template-columns:1fr}.stk .bar{display:flex;flex-direction:column;gap:4px;height:auto;background:none}.stk .seg{flex:none;width:calc(34% + var(--w) * .66);min-height:44px;padding:8px 12px;font-size:14px;overflow:visible;white-space:normal}.stk .seg:empty{display:none}html.js .tile:not(.in) .stk .seg{width:0;padding:0;min-height:0}}
 .clips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:clamp(48px,6vw,90px)}
 .clip{background:var(--bg);color:var(--ink);padding:20px 22px 22px;text-decoration:none;display:flex;flex-direction:column;gap:10px;border-radius:2px;transition:transform .3s var(--ease)}
 .clip:nth-child(odd){transform:rotate(-.6deg)}.clip:nth-child(even){transform:rotate(.5deg)}
@@ -182,7 +184,7 @@ svg text{font-family:var(--f-body)}
 .split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(22px,3vw,44px)}
 @media(max-width:1000px){.tool{grid-template-columns:1fr}.rail{flex-direction:row;overflow-x:auto;padding:0}.rail h4{display:none}.ri{border-left:0;border-bottom:5px solid transparent;white-space:nowrap;width:auto}.ri[aria-selected="true"]{border-bottom-color:var(--c)}.ri small{display:none}.split{grid-template-columns:1fr}}
 label{display:block;font:600 14.5px/1.2 var(--f-body);margin-bottom:7px}
-textarea,input[type=number],input[type=text],input[type=date],select{width:100%;font:400 16px/1.5 var(--f-body);color:var(--ink);background:var(--bg);border:2px solid transparent;border-radius:3px;padding:12px 14px}
+textarea,input[type=number],input[type=text],input[type=date],input[type=time],select{width:100%;font:400 16px/1.5 var(--f-body);color:var(--ink);background:var(--bg);border:2px solid transparent;border-radius:3px;padding:12px 14px}
 textarea{min-height:260px;resize:vertical}
 textarea:focus,input:focus,select:focus{outline:0;border-color:var(--go)}
 .demos{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
@@ -201,6 +203,7 @@ textarea:focus,input:focus,select:focus{outline:0;border-color:var(--go)}
 .empty{background:var(--bg);padding:38px 26px;border-radius:3px}
 .empty b{display:block;font:700 24px/1.1 var(--f-display);letter-spacing:-.03em;margin-bottom:8px}
 .verdict{padding:22px 24px;display:flex;gap:18px;align-items:center;margin-bottom:14px;border-radius:3px}
+@media(max-width:600px){.verdict{flex-direction:column;align-items:flex-start;gap:10px}}
 .verdict.stop{background:var(--flag-bg);color:var(--flag)}.verdict.push{background:var(--warn-bg);color:var(--warn)}.verdict.clean,.verdict.minor{background:var(--ok-bg);color:var(--ok)}
 .verdict .vb{font:800 clamp(30px,4.2vw,52px)/.95 var(--f-display);letter-spacing:-.045em}
 .verdict p{font-size:16px;color:var(--ink)}
@@ -282,6 +285,7 @@ html.js .tile:not(.in) .col i{height:0}
 html.js .tile:not(.in) .draw{stroke-dashoffset:1}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}html.js .rv{opacity:1;transform:none;transition:none}.btn,.clip{transition:none}.draw,.col i,.hbar i,.stk .seg{transition:none!important}}
 </style>
+<!--WRAP--></head><body><!--/WRAP-->
 
 <header class="nav bleed"><div class="nav-in">
   <a class="logo" href="#top"><img src="assets/logo.svg" alt="" width="30" height="30">Landed</a>
@@ -341,7 +345,7 @@ html.js .tile:not(.in) .draw{stroke-dashoffset:1}
     <div class="tile t-rent rv" style="--d:100ms"><h3>Manhattan rent hit a record, and there is nothing to choose from.</h3>
       <div class="k">$5,395</div><p style="margin:6px 0 14px">median rent in September 2026, up 9% in a year</p>
       <div class="hbar"><span>Vacancy</span><div class="tr"><i style="--w:15.4%"></i><b class="out" style="left:calc(15.4% + 10px)">1.54%</b></div></div>
-      <div class="hbar"><span>Active listings</span><div class="tr"><i style="--w:50%;--c:var(--field-soft)"></i><b>5,015 (−16%)</b></div></div>
+      <div class="hbar"><span>Active listings</span><div class="tr"><i style="--w:50%;--c:var(--field-soft)"></i><b class="out" style="left:calc(50% + 10px)">5,015 (−16%)</b></div></div>
       <p class="src"><a href="https://www.6sqft.com/manhattan-median-rent-hits-record-5395-month-in-september/" target="_blank" rel="noopener">6sqft</a> reporting Corcoran's September 2026 report. Vacancy bar is drawn against a 10% scale.</p></div>
     <div class="tile t-stu rv" style="--d:200ms"><h3>137,799 people in New York State rent with no US credit.</h3>
       <div id="c-donut"></div>
@@ -956,3 +960,4 @@ if(canAnim()){
 }
 })();
 </script>
+<!--WRAP--></body></html><!--/WRAP-->
