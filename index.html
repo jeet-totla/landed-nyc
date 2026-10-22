@@ -839,12 +839,12 @@ $('#drun').onclick=()=>{
 
 /* ---------- complaint map (schematic) ---------- */
 (function(){
-  const k=22,items=[['Bronx',null,330,10],['Manhattan',41,150,40],['Queens',46,350,150],['Brooklyn',67,170,235],['Staten Island',null,10,310]];
-  let o='<svg class="chart" viewBox="0 0 520 420" role="img" aria-label="Schematic of the five boroughs. Brooklyn 67 complaints, Queens 46, Manhattan 41. Bronx and Staten Island not itemised.">';
+  const k=22,items=[['Bronx',null,330,8],['Manhattan',41,150,8],['Queens',46,340,150],['Brooklyn',67,150,185],['Staten Island',null,4,262]];
+  let o='<svg class="chart" viewBox="0 0 500 380" role="img" aria-label="Schematic of the five boroughs. Brooklyn 67 complaints, Queens 46, Manhattan 41. Bronx and Staten Island not itemised.">';
   items.forEach(([n,v,x,y])=>{
-    const sd=v?Math.sqrt(v)*k:100;
-    if(v)o+='<rect class="bx" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bn" x="'+(x+14)+'" y="'+(y+40)+'">'+v+'</text><text class="bl" x="'+(x+14)+'" y="'+(y+62)+'">'+n+'</text>';
-    else o+='<rect class="bx nil" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bl" style="fill:var(--field-ink)" x="'+(x+12)+'" y="'+(y+34)+'">'+n+'</text><text class="bn2" x="'+(x+12)+'" y="'+(y+54)+'">not itemised</text>';
+    const sd=v?Math.sqrt(v)*k:122;
+    if(v)o+='<rect class="bx" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bn" x="'+(x+16)+'" y="'+(y+46)+'">'+v+'</text><text class="bl" x="'+(x+16)+'" y="'+(y+70)+'">'+n+'</text>';
+    else o+='<rect class="bx nil" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bl" style="fill:var(--field-ink)" x="'+(x+14)+'" y="'+(y+40)+'">'+n+'</text><text class="bn2" x="'+(x+14)+'" y="'+(y+62)+'">not itemised</text>';
   });
   $('#c-map').innerHTML=o+'</svg>';
 })();
