@@ -3,7 +3,7 @@
 @page{size:Letter;margin:0}
 :root{--ink:#0E1A14;--bg:#F4F5F2;--go:#00793A;--hl:#FFE04A;--mut:#4B5A52;--line:#D5DAD4}
 *{box-sizing:border-box;margin:0;padding:0}
-body{width:8.5in;height:11in;background:var(--bg);color:var(--ink);font:400 8.2pt/1.32 Inter,sans-serif;padding:0 .5in;display:flex;flex-direction:column;overflow:hidden}
+body{width:8.5in;height:11in;background:var(--bg);color:var(--ink);font:400 8pt/1.3 Inter,sans-serif;padding:0 .5in;display:flex;flex-direction:column;overflow:hidden}
 h1,h2{font-family:'Inter Display',Inter,sans-serif}
 .top{margin:0 -.5in;background:var(--go);color:#fff;padding:.2in .5in .17in;display:flex;justify-content:space-between;gap:.3in;align-items:flex-end}
 .top h1{font-size:28pt;font-weight:800;letter-spacing:-.045em;line-height:.95}
@@ -27,12 +27,12 @@ td:first-child{font-weight:700;width:30%}
 .me{background:#fff;border-left:4px solid var(--go);padding:6px 9px;margin-top:6px;font-size:8pt}
 .me b{color:var(--go)}
 .shots{display:grid;grid-template-columns:1.25fr 1fr 1.35fr .8fr;gap:7px;margin-top:6px;align-items:end}
-.shots figure{margin:0}.shots img{width:100%;height:.92in;object-fit:cover;object-position:top;display:block;border:1px solid var(--line)}
+.shots figure{margin:0}.shots img{width:100%;height:.7in;object-fit:cover;object-position:top;display:block;border:1px solid var(--line)}
 .shots figcaption{font-size:6.8pt;color:var(--mut);margin-top:2px;line-height:1.25}
 .foot{margin-top:auto;padding:7px 0 .3in;border-top:1px solid var(--line);font-size:6.9pt;color:var(--mut);line-height:1.35}
 .wide{grid-column:1/-1}
 a{color:inherit}
-.biz{display:grid;grid-template-columns:.8fr 1.5fr 1.1fr;gap:.2in;background:#fff;border-top:3px solid var(--ink);padding:8px 10px}.biz h3{font-size:7.4pt;text-transform:uppercase;letter-spacing:.08em;color:var(--go);margin-bottom:3px}.biz ul{padding-left:12px}.biz li{margin-bottom:2px}.diff{border-left:4px solid var(--hl);padding:2px 9px;font-size:8.6pt}
+.biz{display:grid;grid-template-columns:.8fr 2.2fr 1.1fr;gap:.2in;background:#fff;border-top:3px solid var(--ink);padding:8px 10px}.biz h3{font-size:7.4pt;text-transform:uppercase;letter-spacing:.08em;color:var(--go);margin-bottom:3px}.biz ul{padding-left:12px;column-count:2;column-gap:14px}.biz li{break-inside:avoid}.biz li{margin-bottom:2px}.diff{border-left:4px solid var(--hl);padding:2px 9px;font-size:8.6pt}
 </style></head><body>
 <div class="top"><div><h1>Landed</h1><p>Protects NYC renters from the first message to the last month. Rules decide. AI only explains and drafts.</p></div>
 <div class="l"><a href="https://jeet-totla.github.io/landed-nyc/"><b>jeet-totla.github.io/landed-nyc</b></a><br><a href="https://github.com/jeet-totla/landed-nyc">github.com/jeet-totla/landed-nyc</a> (open source)<br>Jeet Totla · TETR College of Business<br>NYC Founders Challenge</div></div>
@@ -52,9 +52,9 @@ a{color:inherit}
 <section class="wide"><div class="diff"><b>Why it's different:</b> listing sites show apartments and legal clinics help after a dispute. As far as I can tell, nothing checks your paperwork against the law before you pay, with a source on every flag, and works for renters who have no US credit.</div></section>
 
 <section class="wide"><h2>The business (hypotheses to test)</h2>
-<div class="biz"><div><h3>Who pays</h3>Renters use it free. Institutions that bring newcomers to the city pay.</div>
-<div><h3>Revenue ideas</h3><ul><li><b>Universities and relocation programs</b> license it for arriving international students.</li><li><b>Compliance check for landlords and brokers</b> who want to show their listing follows the FARE Act.</li><li><b>Paid renter pack</b> for filings and documents, if free use proves demand.</li></ul></div>
-<div><h3>Why it's credible</h3>One caught fee is worth more than any price: no broker fee saves $5,454 upfront on average (StreetEasy via Hoodline). Rules are fixed, data is open, so it costs little to run. Next test: a pilot with one student cohort.</div></div></section>
+<div class="biz"><div><h3>How it grows</h3><b>Now:</b> free for every renter, to build trust. <b>Later:</b> core checks stay free; a few extra services cost a very small amount.</div>
+<div><h3>Who could pay or partner</h3><ul><li><b>Universities and relocation programs</b> for arriving international students.</li><li><b>Employers</b> that bring in many interns and new hires and need to sort out their housing.</li><li><b>Landlords and brokers</b> who want to show a listing follows the FARE Act.</li><li><b>Paid low-price services,</b> such as a renter pack of filings and documents.</li><li><b>Government:</b> become a trusted site the city promotes and works with.</li></ul></div>
+<div><h3>Why it's credible</h3>One caught fee is worth more than any price: no broker fee saves $5,454 upfront on average (StreetEasy via Hoodline). Rules are fixed and data is open, so it costs little to run. Next test: a pilot with one student cohort.</div></div></section>
 
 <section><h2>Process and AI toolkit</h2>
 <p><b>1.</b> Spotted the problem in reporting and the law. <b>2.</b> Checked every rule and number against statutes and agency pages, dated in docs/RULES.md; unconfirmed rules are marked. <b>3.</b> Built a tested rules engine with live HPD and state licence lookups, then tested on desktop and phone.</p>
@@ -71,5 +71,5 @@ a{color:inherit}
 <figure><img src="s4.jpg"><figcaption>Heat helper and 311 draft</figcaption></figure></div>
 <p style="margin-top:5px"><b>Working build:</b> <a href="https://jeet-totla.github.io/landed-nyc/">jeet-totla.github.io/landed-nyc</a> · <b>Code:</b> <a href="https://github.com/jeet-totla/landed-nyc">github.com/jeet-totla/landed-nyc</a>. These screenshots show the build if the link fails.</p></section>
 </div>
-<div class="foot">Landed is information, not legal advice. It judges only the text you give it. Live landlord lookups work on the GitHub Pages site, not in embedded views. Heuristics such as 40x rent income are labelled as not law. Complaint counts are from press reports of 311 data. Law sources: GOL §7-108, RPL §§226-c, 234, 235-b, 238-a, Art. 6-A; NYC DCWP FARE Act FAQ; HPD; HCR.</div>
+<div class="foot">Landed is information, not legal advice. It judges only the text you give it. Live landlord lookups work on the GitHub Pages site, not in embedded views. Heuristics such as 40x rent income are labelled as not law. Complaint counts are from press reports of 311 data. Sources are listed in the repo (docs/RULES.md).</div>
 </body></html>

@@ -53,11 +53,13 @@ Broker-fee complaints to 311 since the FARE Act took effect: **186**, with Brook
 
 ## Who it is for and how it could pay
 
-Newcomers get hit hardest: students and workers arriving from abroad have no US credit history, no local guarantor and no way to tell a legal fee from an illegal one. Renters use Landed free. These revenue ideas are hypotheses to test, not live revenue:
+Newcomers get hit hardest: students and workers arriving from abroad have no US credit history, no local guarantor and no way to tell a legal fee from an illegal one. Landed is free to use at the start to build trust. Later the core checks stay free and a few services cost a very small amount. These ideas are hypotheses to test, not live revenue:
 
-- Universities and relocation programs license it for arriving international students.
-- Landlords and brokers use a check that shows their listing follows the FARE Act.
-- A paid renter pack for filings and documents, if free use proves demand.
+- Universities and relocation programs, for arriving international students.
+- Employers that hire many interns and new hires and need to sort out their housing.
+- Landlords and brokers who want to show a listing follows the FARE Act.
+- A paid renter pack of filings and documents, at a minimal price.
+- Longer term, a partnership with the city as a trusted site it promotes and works with.
 
 Listing sites show apartments and legal clinics help after a dispute. As far as we can tell, nothing checks your paperwork against the law before you pay, with a source on every flag, for renters who have no US credit.
 
