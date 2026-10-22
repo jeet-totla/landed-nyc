@@ -110,6 +110,12 @@ p{margin:0}a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
 .chk .rm h4{font-size:18px;margin-bottom:8px}.chk .it{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--s2,rgba(128,128,128,.25));font-size:15px}
 .chk .it select{width:auto}.chk .it input[type=text]{grid-column:1/-1}
 svg text{font-family:var(--f-body)}
+
+.ring{fill:none;stroke:var(--hl);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.ring.on{animation:ping 2.4s ease-out infinite}
+@keyframes ping{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.4);opacity:0}}
+@media(prefers-reduced-motion:reduce){.ring,.ring.on{animation:none;opacity:0}}
+.cart .bo{transform-box:fill-box;transform-origin:center}
 .chart{width:100%;height:auto;display:block;overflow:visible}
 .chart .ax{fill:var(--field-soft);font-size:12.5px}
 .chart .lb{fill:var(--field-ink);font-size:14px;font-weight:600}
@@ -847,8 +853,10 @@ $('#drun').onclick=()=>{
   let o='<svg class="chart" viewBox="0 0 500 380" role="img" aria-label="Schematic of the five boroughs. Brooklyn 67 complaints, Queens 46, Manhattan 41. Bronx and Staten Island not itemised.">';
   items.forEach(([n,v,x,y])=>{
     const sd=v?Math.sqrt(v)*k:122;
+    o+='<g class="bo">';
     if(v)o+='<rect class="bx" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bn" x="'+(x+16)+'" y="'+(y+46)+'">'+v+'</text><text class="bl" x="'+(x+16)+'" y="'+(y+70)+'">'+n+'</text>';
     else o+='<rect class="bx nil" x="'+x+'" y="'+y+'" width="'+sd+'" height="'+sd+'" rx="2"/><text class="bl" style="fill:var(--field-ink)" x="'+(x+14)+'" y="'+(y+40)+'">'+n+'</text><text class="bn2" x="'+(x+14)+'" y="'+(y+62)+'">not itemised</text>';
+    o+='</g>';
   });
   $('#c-map').innerHTML=o+'</svg>';
 })();
@@ -919,7 +927,7 @@ function donut(){
   const segs=[['China',34,'#FFE14D'],['India',25.8,'#7BD3A0'],['South Korea',4.4,'#8FB8FF'],['Canada',4,'#F2A88F'],['Taiwan',1.8,'#D6C2F5'],['All others',30,'#4A7A5E']];
   const r=66,C=2*Math.PI*r;let off=0,s='';
   segs.forEach(g=>{const len=g[1]/100*C;s+='<circle r="'+r+'" cx="90" cy="90" fill="none" stroke="'+g[2]+'" stroke-width="22" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 90 90)"/>';off+=len;});
-  return '<div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 180 180" width="170" height="170" role="img" aria-label="Donut chart of international student origins in New York State">'+s+'<text x="90" y="88" text-anchor="middle" font-family="var(--f-display)" font-weight="800" font-size="24" fill="var(--field-ink)">137.8K</text><text x="90" y="106" text-anchor="middle" class="ax">students</text></svg><div class="legend" style="flex-direction:column;margin:0">'+segs.map(g=>'<span><i style="--c:'+g[2]+'"></i>'+g[0]+' '+g[1]+'%</span>').join('')+'</div></div>';
+  return '<div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 180 180" width="170" height="170" role="img" aria-label="Donut chart of international student origins in New York State">'+s+'<text x="90" y="88" text-anchor="middle" font-family="var(--f-display)" font-weight="800" font-size="24" fill="var(--field-ink)">137.8K</text><text x="90" y="106" text-anchor="middle" font-size="12.5" fill="var(--field-soft)">students</text></svg><div class="legend" style="flex-direction:column;margin:0">'+segs.map(g=>'<span><i style="--c:'+g[2]+'"></i>'+g[0]+' '+g[1]+'%</span>').join('')+'</div></div>';
 }
 function stack(){
   const rent=5395,legal=[['First month',rent],['Deposit',rent],['Check',20]],ill=[['Broker fee, 15% of annual rent',rent*12*.15],['Hidden-listing access',4000],['Junk fees',1140]];
@@ -958,6 +966,51 @@ if(canAnim()){
     anime({targets:o2,v:to,round:1,duration:1400,easing:'easeOutExpo',update:()=>{el.textContent=(el.dataset.pre||'')+Math.round(o2.v).toLocaleString('en-US');}});}),{threshold:.6});
   $$('[data-count]').forEach(el=>co.observe(el));
 }
+})();
+
+/* ---------- problem section motion ---------- */
+(function(){
+  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!window.anime)return;
+  const fI=v=>Math.round(v).toLocaleString('en-US');
+  const num=(el,to,fmt,delay,dur)=>{const o={v:0};anime({targets:o,v:to,duration:dur||1400,delay:delay||0,easing:'easeOutExpo',update:()=>{el.textContent=fmt(o.v);},complete:()=>{el.textContent=fmt(to);}});};
+  const prep={},play={};
+  /* line chart: points pop in after the line draws, the 2,000+ point pings */
+  {const t=$('.t-line'),pts=[...t.querySelectorAll('svg circle')],lbs=[...t.querySelectorAll('svg text.lb')];
+   pts.forEach(c=>{c.dataset.r=c.getAttribute('r');c.setAttribute('r',0);});anime.set(lbs,{opacity:0});
+   prep.line=1;play.line=()=>{
+     anime({targets:pts,r:el=>[0,+el.dataset.r],delay:anime.stagger(240,{start:700}),duration:520,easing:'easeOutElastic(1,.7)'});
+     anime({targets:lbs,opacity:[0,1],translateY:[6,0],delay:anime.stagger(240,{start:800}),duration:420,easing:'easeOutQuad'});
+     setTimeout(()=>{const big=pts[2];if(!big)return;const r=document.createElementNS('http://www.w3.org/2000/svg','circle');r.setAttribute('class','ring on');r.setAttribute('cx',big.getAttribute('cx'));r.setAttribute('cy',big.getAttribute('cy'));r.setAttribute('r',6);big.parentNode.appendChild(r);},1800);};}
+  /* funnel */
+  {const b=$$('.t-fun .hbar b'),tx=b.map(x=>x.textContent);b.forEach(x=>x.textContent='0');
+   play.fun=()=>{num(b[0],2000,v=>fI(v)+'+',200,1500);num(b[1],74,v=>fI(v),900,900);};}
+  /* renewals */
+  {const b=$$('.t-ren .col b');b.forEach(x=>x.textContent='0%');
+   play.ren=()=>{num(b[0],26,v=>Math.round(v)+'%',150,1300);num(b[1],9,v=>Math.round(v)+'%',500,1300);};}
+  /* rent */
+  {const k=$('.t-rent .k'),bs=$$('.t-rent .hbar b');k.textContent='$0';bs[0].textContent='0.00%';bs[1].textContent='0';
+   play.rent=()=>{num(k,5395,v=>'$'+fI(v),100,1500);num(bs[0],1.54,v=>v.toFixed(2)+'%',300,1200);num(bs[1],5015,v=>fI(v)+' (−16%)',400,1300);};}
+  /* donut: sweep segment by segment */
+  {const t=$('.t-stu'),cs=[...t.querySelectorAll('svg circle')],ctr=t.querySelector('svg text');
+   const L=cs.map(c=>+c.getAttribute('stroke-dasharray').split(' ')[0]),C=2*Math.PI*66,O=[];let a=0;L.forEach(l=>{O.push(a);a+=l;});
+   const draw=p=>cs.forEach((c,i)=>{const d=Math.max(0,Math.min(L[i],p*C-O[i]));c.setAttribute('stroke-dasharray',d.toFixed(2)+' '+(C-d).toFixed(2));});
+   draw(0);const first=ctr?ctr.textContent:'';if(ctr)ctr.textContent='0K';
+   play.stu=()=>{const o={p:0};anime({targets:o,p:1,duration:1700,easing:'easeInOutCubic',update:()=>draw(o.p)});if(ctr)num(ctr,137.8,v=>v.toFixed(1)+'K',100,1700);};}
+  /* map: squares grow from their centre, numbers count */
+  {const g=$$('.t-map .bo'),ns=$$('.t-map .bn');const v=ns.map(n=>+n.textContent);ns.forEach(n=>n.textContent='0');
+   g.forEach(e=>{e.style.transform='scale(0)';});
+   play.map=()=>{g.forEach((e,i)=>{e.style.transition='transform .8s cubic-bezier(.34,1.56,.64,1) '+(i*140)+'ms';e.style.transform='scale(1)';});
+     const order=['Bronx','Manhattan','Queens','Brooklyn','Staten Island'].filter(n=>n!=='Bronx'&&n!=='Staten Island');
+     ns.forEach((n,i)=>num(n,v[i],fI,300+i*180,1100));};}
+  /* stack totals */
+  {const ts=$$('.t-stack .tot'),vals=ts.map(t=>+t.textContent.replace(/\D/g,''));ts.forEach(t=>t.textContent='$0');
+   play.stack=()=>ts.forEach((t,i)=>num(t,vals[i],v=>'$'+fI(v),200+i*300,1500));}
+  const map={'t-line':'line','t-fun':'fun','t-ren':'ren','t-rent':'rent','t-stu':'stu','t-map':'map','t-stack':'stack'},done={};
+  const run=k=>{if(done[k])return;done[k]=1;play[k]&&play[k]();};
+  const io2=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;io2.unobserve(e.target);for(const c in map)if(e.target.classList.contains(c))run(map[c]);}),{threshold:.35});
+  Object.keys(map).forEach(c=>{const el=$('.'+c);if(el)io2.observe(el);});
+  setTimeout(()=>Object.values(map).forEach(run),9000);
 })();
 </script>
 <!--WRAP--></body></html><!--/WRAP-->
